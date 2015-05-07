@@ -7,7 +7,7 @@ repetitions = 3;
 beeps = 0;
 
 S.popsize = 100;                    % number of attractor networks in the population
-S.nbof_generations = 1;             % number of generations of attractor networks
+S.nbof_generations = 10;             % number of generations of attractor networks
 S.selection_type = 'truncation';    % 'truncation'
 S.selected_perc = 20;               % 0 to 100; the selected percentage of individuals for reproduction
 S.nbof_global_testingpatterns = 0;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
@@ -15,7 +15,7 @@ S.nbof_global_testingpatterns = 0;  % the number of global testing patterns; if 
 S.retraining = 0;                   % 0 or 1; retraining in each generation with the selected outputs
 S.change_testingset = 1;            % 0 or 1; change testing set of each individual to the selected outputs
 
-S.parametersets = zeros(1, S.popsize) + 0; % ID of the parameterset for the attractors
+S.parametersets = zeros(1, S.popsize) + 111; % ID of the parameterset for the attractors
 S.popseeds = [1 2 3];
 felirat = {};
 next = 1;

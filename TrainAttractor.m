@@ -16,7 +16,7 @@ switch A.P.learning_rule
         
     case 'covariance' % Rolls, 2012    
         a = mean(mean(A.D.trainingset));
-        N = A.P.nbof_patterns;    
+        N = size(A.D.trainingset, 1);    
         inc = (1/(N*a*a)) * ((A.D.trainingset-a)' * (A.D.trainingset-a));
         
         A.W.state = A.W.state * A.P.forgetting_rate;
@@ -25,8 +25,8 @@ switch A.P.learning_rule
     
     case 'covariance2' % same as covariance but mean activity is calculated per neuron, and not per network
         a = mean(A.D.trainingset);
-        arep = repmat(a,A.P.nbof_patterns,1);        
-        N = A.P.nbof_patterns;                
+        N = size(A.D.trainingset, 1);    
+        arep = repmat(a,N,1);                               
         inc = (1./(N*(a'*a))) * ((A.D.trainingset-arep)' * (A.D.trainingset-arep));
 
         A.W.state = A.W.state * A.P.forgetting_rate;

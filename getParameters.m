@@ -131,7 +131,7 @@ switch v
 
         % Training
         P.trained_percentage = 50;          % percentage of selected items for training from the testing set
-        P.learning_rule = 'covariance';     % 'Hebbian1', 'Hebbian2', or 'covariance'
+        P.learning_rule = 'covariance2';     % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;                % multiplier of the increment
         P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
 
