@@ -19,7 +19,6 @@ switch v
         P.connection_density = 1;           % = dilution; proportion of existing weights to all possible weights; 0 to 1
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.threshold = 5;                   % activation threshold for transferfn_step
-        P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
         P.nbof_patterns = 100;               % number of patterns in the testing set
@@ -53,7 +52,6 @@ switch v
         P.connection_density = 1;           % proportion of existing weights to all possible weights; 0 to 1
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.threshold = 13;                  % activation threshold for transferfn_step
-        P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
         P.nbof_patterns = 50;                % number of patterns in the testing set
@@ -87,7 +85,6 @@ switch v
         P.connection_density = 1;           % proportion of existing weights to all possible weights; 0 to 1
         P.activation_function = @transferfn_tanh;      % DOES NOT WORK @tanh (-1/+1), @transferfn_step (0/1)
         P.threshold = 0.5;                  % activation threshold for transferfn_step
-        P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
         P.nbof_patterns = 50;                % number of patterns in the testing set
@@ -121,7 +118,6 @@ switch v
         P.connection_density = 1;           % = dilution; proportion of existing weights to all possible weights; 0 to 1
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.threshold = 13;                   % activation threshold for transferfn_step
-        P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
         P.nbof_patterns = 50;                % number of patterns in the testing set

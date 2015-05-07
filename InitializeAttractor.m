@@ -63,7 +63,14 @@ W.state = P.weight_init(P.nbof_neurons) * P.strenght_of_memory_traces;
 
 nbof_eliminated = round(  numel(W.state) * (1-P.connection_density)   );
 W.eliminated = randperm(numel(W.state), nbof_eliminated);
-%W.state(W.eliminated) = 0;
+
+if P.allow_selfloops
+    diagonal = [];
+else
+    diagonal = 1 : P.nbof_neurons+1 : P.nbof_neurons*P.nbof_neurons;
+end
+W.eliminated = sort([W.eliminated, diagonal]);
+W.state(W.eliminated) = 0;
 
 %% Store
 
