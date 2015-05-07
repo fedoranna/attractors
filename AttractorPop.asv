@@ -53,7 +53,7 @@ for g = 2:S.nbof_generations
     
     % Collecting the fitness measure    
     for i = 1:S.popsize
-        fitness(i,g-1) = getfield(G{i, g-1}.T, S.fitness_measure);
+        fitness(i,g-1) = getfield(G{i, g-1}.T, S.fitness_measure)
     end
     
     % Selection    
@@ -99,7 +99,7 @@ end
 %% Fitness of the last generation
 
 for i = 1:S.popsize
-    fitness(i,end) = getfield(G{i, g-1}.T, S.fitness_measure);
+    fitness(i,end) = G{i, end}.T.percof_correct; % rows=individuals, columns=generations
 end
 
 

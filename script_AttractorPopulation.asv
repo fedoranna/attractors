@@ -12,7 +12,7 @@ S.selection_type = 'truncation';    % 'truncation'
 S.selected_perc = 20;               % 0 to 100; the selected percentage of individuals for reproduction
 S.nbof_global_testingpatterns = 1;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
 S.retraining = 1;                   % 0 or 1; retraining in each generation with the selected outputs
-S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
+S.fitness_measure = 
 
 S.parametersets = zeros(1, S.popsize) + 111; % ID of the parameterset for the attractors
 S.popseeds = [1 2 3];
@@ -45,7 +45,7 @@ for r = 1:repetitions
 end
 xlabel('Generations')
 ylabel('Average fitness of the population (% of recalled patterns)')
-%set(gca, 'YLim', [0,101])
+set(gca, 'YLim', [0,101])
 
 %% Monitor
 
