@@ -30,7 +30,7 @@ switch v
         P.trained_percentage = 100;          % percentage of selected items for training from the testing set
         P.learning_rule = 'covariance2';     % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;                % multiplier of the increment
-        P.forgetting_rate = 10;             % weights are divided by this number before each trainig session
+        P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
 
         % Testing    
         P.timeout = 100;                    % the maximum number of recurrent cycles
@@ -63,7 +63,7 @@ switch v
         P.trained_percentage = 60;         % percentage of selected items for training from the testing set
         P.learning_rule = 'covariance';        % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;
-        P.forgetting_rate = 10;             % weights are divided by this number before each trainig session
+        P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
 
         % Testing    
         P.timeout = 100;                      % the maximum number of recurrent cycles
@@ -96,7 +96,7 @@ switch v
         P.trained_percentage = 100;         % percentage of selected items for training from the testing set
         P.learning_rule = 'Hebbian1';        % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;
-        P.forgetting_rate = 10;             % weights are divided by this number before each trainig session
+        P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
 
         % Testing    
         P.timeout = 100;                      % the maximum number of recurrent cycles
@@ -129,7 +129,7 @@ switch v
         P.trained_percentage = 50;          % percentage of selected items for training from the testing set
         P.learning_rule = 'covariance';     % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;                % multiplier of the increment
-        P.forgetting_rate = 10;             % weights are divided by this number before each trainig session
+        P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
 
         % Testing    
         P.timeout = 100;                     % the maximum number of recurrent cycles
