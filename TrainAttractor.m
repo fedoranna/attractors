@@ -1,4 +1,12 @@
-function A = TrainAttractor(A)
+function A = TrainAttractor(A, varargin)
+
+ip = inputParser;
+defaultWeightVisualizer = @NOP;
+addRequired(ip, 'A');
+addOptional(ip, 'weightVisualizer', defaultWeightVisualizer);
+parse(ip, A, varargin{:});
+A = ip.Results.A; 
+weightVisualizer = ip.Results.weightVisualizer;
 
 switch A.P.learning_rule
     case 'Hebbian1'
@@ -32,6 +40,7 @@ switch A.P.learning_rule
         A.W.state = A.W.state * A.P.forgetting_rate;
         A.W.state = A.W.state + A.P.learning_rate * inc;       
         A.W.state(A.W.eliminated) = 0;
+        weightVisualizer(A.W);
         
     otherwise 
         'Error: learning rule is unknown!'
