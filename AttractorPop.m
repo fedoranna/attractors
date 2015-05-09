@@ -99,7 +99,7 @@ end
 %% Fitness of the last generation
 
 for i = 1:S.popsize
-    fitness(i,end) = getfield(G{i, g-1}.T, S.fitness_measure);
+    fitness(i,end) = getfield(G{i, end}.T, S.fitness_measure);
 end
 
 

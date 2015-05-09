@@ -20,6 +20,8 @@ end
 % if there is a threshold for active and inactive it comes here: A.L.output = 
 
 A.T.correctness = A.T.outputs == A.D.testingset_O;
+
+% Possible fitness measures
 A.T.scores = mean(A.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern
 A.T.avg_score = mean(A.T.scores);           % 0 to 1; avg score on all testing patterns
 A.T.avg_score_perc = mean(A.T.scores)*100;  % 0 to 100; avg score percentage on all testing patterns
