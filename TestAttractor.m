@@ -1,6 +1,5 @@
 function A = TestAttractor(A)
 
-A.T.scores = NaN(size(A.D.testingset_I, 1), 1);
 A.T.outputs = NaN(size(A.D.testingset_I, 1), A.P.nbof_neurons);
 for p = 1 : size(A.D.testingset_I, 1)         % patterns
 
