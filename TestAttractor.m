@@ -16,6 +16,11 @@ for p = 1 : size(A.D.testingset_I, 1)         % patterns
     
 end
 
+% Tolerance threshold
+% if A.P.binarize_output 
+%     A.T.outputs = binarize(A.T.outputs, A.P.tolerance);
+% end
+
 A.T.correctness = A.T.outputs == A.D.testingset_O;
 
 % Possible fitness measures

@@ -36,11 +36,21 @@ switch A.P.learning_rule
         N = size(A.D.trainingset, 1);    
         arep = repmat(a,N,1);                               
         inc = (1./(N*(a'*a))) .* ((A.D.trainingset-arep)' * (A.D.trainingset-arep));
+        
         % Problem 1: if there is a neuron which is never active, then there
         % will be Infs in the first part and 0s in the second part and
         % Inf*0 = NaN. The whole inc will be NaN!
+        for i = 1:numel(inc)
+            if isnan(inc(i))
+                inc(i) = 0;
+            end
+        end
+        
         % Problem 2: if there is only one pattern, trainingset-arep = 0s,
         % so the whole inc will be 0s
+        if N == 1
+            inc = A.D.trainingset' * A.D.trainingset;
+        end
 
         A.W.state = A.W.state * A.P.forgetting_rate;
         A.W.state = A.W.state + A.P.learning_rate * inc;       
@@ -50,6 +60,32 @@ switch A.P.learning_rule
     otherwise 
         'Error: learning rule is unknown!'
 end
+
+if A.P.automatic_threshold
+    A = set_threshold(A);
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

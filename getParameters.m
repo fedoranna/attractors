@@ -154,14 +154,14 @@ switch v
         P.strenght_of_memory_traces = 0;   % multiplier of rand weights
 
         % Architecture
-        P.nbof_neurons = 1000;               % number of neurons
+        P.nbof_neurons = 100;               % number of neurons
         P.connection_density = 1;           % proportion of existing weights to all possible weights; 0 to 1
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.threshold = 0;                  % activation threshold for transferfn_step
         P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
-        P.nbof_patterns = 10;                % number of patterns in the testing set
+        P.nbof_patterns = 2;                % number of patterns in the testing set
         P.lengthof_patterns = P.nbof_neurons; % the length of patterns; = P.nbof_neurons
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
@@ -171,6 +171,10 @@ switch v
         P.learning_rule = 'covariance2';        % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;                % learning rate
         P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
+        P.automatic_threshold = 1;          % 1/0; automatic threshold
+        P.sparseness_difference = 0.01;      % maximum allowable difference between input and output sparseness wehn setting threshold
+        P.threshold_incr = 0.009;             % the increment with which to change the threshold during threshold setting
+        P.threshold_setting_timeout = 1000; % maximum number of steps when setting the threshold
 
         % Testing    
         P.timeout = 100;                      % the maximum number of recurrent cycles
