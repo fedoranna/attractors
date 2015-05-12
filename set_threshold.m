@@ -26,7 +26,7 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
     
     % Timeout
     incr_steps = incr_steps + 1;
-    if incr_steps > P.threshold_setting_timeout
+    if incr_steps > A.P.threshold_setting_timeout
         break
     end
     

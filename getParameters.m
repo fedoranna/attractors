@@ -161,7 +161,7 @@ switch v
         P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
-        P.nbof_patterns = 2;                % number of patterns in the testing set
+        P.nbof_patterns = 10;                % number of patterns in the testing set
         P.lengthof_patterns = P.nbof_neurons; % the length of patterns; = P.nbof_neurons
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
