@@ -6,7 +6,7 @@ function [G, fitness] = AttractorPop(S)
 if strcmp(S.popseed, 'noseed')    
 else
     rng(S.popseed, 'twister');
-    seeds = randperm(S.popsize*3, S.popsize*3);
+    seeds = randperm(S.popsize*30000, S.popsize*3);
 end
 
 % Set global problem (this will be the pattern against which each output is evaluated)

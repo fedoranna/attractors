@@ -32,7 +32,7 @@ switch A.P.learning_rule
         A.W.state(A.W.eliminated) = 0;
     
     case 'covariance2' % same as covariance1 but mean activity is calculated per neuron, and not per network
-        a = mean(A.D.trainingset); % this is a row vector
+        a = mean(A.D.trainingset, 1); % this is a row vector
         N = size(A.D.trainingset, 1);    
         arep = repmat(a,N,1);                               
         inc = (1./(N*(a'*a))) .* ((A.D.trainingset-arep)' * (A.D.trainingset-arep));

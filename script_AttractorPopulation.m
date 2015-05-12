@@ -3,7 +3,7 @@ addpath(genpath('C:\Matlab_functions\Attractor\'));
 
 %% Parameters for demo
 
-repetitions = 100;
+repetitions = 1;
 beeps = 0;
 
 S.popsize = 1;                    % number of attractor networks in the population
@@ -28,15 +28,9 @@ if numel(S.popseeds) < repetitions
 end
 
 for r = 1:repetitions
-    %if numel(S.popseeds) >= repetitions
-        S.popseed = S.popseeds(r);
-    %else
-    %    S.popseed = randperm(100,1);
-    %end
-
+    S.popseed = S.popseeds(r);
     [G, fitness] = AttractorPop(S);
     F(r,:) = mean(fitness); % average fitness of the population in each generations; rows=repetitions; columns=generations
-
 end
 
 figure
@@ -60,10 +54,12 @@ close
 %plot(max(fitness))
 %boxplot(fitness)
 %mean(mean(G{end}.T.outputs))
-fitness'
+%fitness'
 %boxplot(F)
 %G{1}.D.trainingset
 %G{1}.T.outputs
+
+mean(F)
 
 imagesc(G{1}.W.state)
 colorbar
@@ -72,7 +68,6 @@ h = gca;
 set(gca, 'XTick', 0.5:1:10.5)
 set(gca, 'YTick', 0.5:1:10.5)
 grid('on')
-
 
 %% Beep
 
