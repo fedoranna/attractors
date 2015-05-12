@@ -3,10 +3,10 @@ function A = TestAttractor(A)
 A.T.outputs = NaN(size(A.D.testingset_I, 1), A.P.nbof_neurons);
 for p = 1 : size(A.D.testingset_I, 1)         % patterns
 
-    A.L.output = A.P.activation_function(A.W.state * A.D.testingset_I(p,:)', A.P.threshold);       
+    A.L.output = A.P.activation_function(A.D.testingset_I(p,:) * A.W.state, A.P.threshold);       
     for r = 1 : A.P.timeout
         previous_output = A.L.output;
-        A.L.output = A.P.activation_function(A.W.state * previous_output, A.P.threshold);
+        A.L.output = A.P.activation_function(previous_output * A.W.state, A.P.threshold);
         diff = abs(A.L.output - previous_output);
         if sum(diff) <= A.P.convergence_threshold
             break
@@ -15,8 +15,6 @@ for p = 1 : size(A.D.testingset_I, 1)         % patterns
     A.T.outputs(p,:) = A.L.output;
     
 end
-
-% if there is a threshold for active and inactive it comes here: A.L.output = 
 
 A.T.correctness = A.T.outputs == A.D.testingset_O;
 

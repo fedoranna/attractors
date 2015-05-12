@@ -3,7 +3,7 @@ addpath(genpath('C:\Matlab_functions\Attractor\'));
 
 %% Parameters for demo
 
-repetitions = 1;
+repetitions = 100;
 beeps = 0;
 
 S.popsize = 1;                    % number of attractor networks in the population
@@ -14,10 +14,28 @@ S.nbof_global_testingpatterns = 0;  % the number of global testing patterns; if 
 S.retraining = 0;                   % 0 or 1; retraining in each generation with the selected outputs
 S.fitness_measure = 'percof_correct';    % choose from the fields of T - see in TestAttractor fn
 
-S.parametersets = zeros(1, S.popsize) + 81982; % ID of the parameterset for the attractors
+S.parametersets = zeros(1, S.popsize) + 182012; % ID of the parameterset for the attractors
 S.popseeds = [];
 felirat = {};
 next = 1;
+
+%% Parameters for testing individual networks
+
+% repetitions = 100;
+% beeps = 0;
+% 
+% S.popsize = 1;                    % number of attractor networks in the population
+% S.nbof_generations = 1;             % number of generations of attractor networks
+% S.selection_type = 'truncation';    % 'truncation'
+% S.selected_perc = 0;               % 0 to 100; the selected percentage of individuals for reproduction
+% S.nbof_global_testingpatterns = 0;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
+% S.retraining = 0;                   % 0 or 1; retraining in each generation with the selected outputs
+% S.fitness_measure = 'percof_correct';    % choose from the fields of T - see in TestAttractor fn
+% 
+% S.parametersets = zeros(1, S.popsize) + 182012; % ID of the parameterset for the attractors
+% S.popseeds = [];
+% felirat = {};
+% next = 1;
 
 %% Run populations of Attractors
 
@@ -60,14 +78,17 @@ close
 %G{1}.T.outputs
 
 mean(F)
+hist(F)
 
-imagesc(G{1}.W.state)
-colorbar
-axis('square')
-h = gca;
-set(gca, 'XTick', 0.5:1:10.5)
-set(gca, 'YTick', 0.5:1:10.5)
-grid('on')
+%% Visualize weights
+
+% imagesc(G{1}.W.state)
+% colorbar
+% axis('square')
+% h = gca;
+% set(gca, 'XTick', 0.5:1:10.5)
+% set(gca, 'YTick', 0.5:1:10.5)
+% grid('on')
 
 %% Beep
 
