@@ -61,15 +61,65 @@ end
 
 W.state = P.weight_init(P.nbof_neurons) * P.strenght_of_memory_traces;
 
-nbof_eliminated = round(  numel(W.state) * (1-P.connection_density)   );
-W.eliminated = randperm(numel(W.state), nbof_eliminated);
-
+% Delete diagonal
 if P.allow_selfloops
     diagonal = [];
 else
     diagonal = 1 : P.nbof_neurons+1 : P.nbof_neurons*P.nbof_neurons;
 end
-W.eliminated = sort([W.eliminated, diagonal]);
+
+% Delete weights based on P.connections_per_neuron (tries to ensure an exact number of weights) as in Rolls, 2012
+if isempty(P.connection_density) 
+    c = P.connections_per_neuron;
+    N = size(W.state,1);
+    dummy = ones(size(W.state));
+    
+    dummy(diagonal) = 0;
+    for i = 1:N
+        avoid = [];
+        all = sum(dummy, 1);
+        current = all(i);
+        todelete = current - c;
+        
+        choosefrom = find(dummy(:,i)); % the index of nonzero elements
+        
+        % Avoiding those neurons that already have c weights
+        for j = 1:numel(all)
+            if all(j) <= c
+                avoid = [avoid, j]; % the index of neurons that already have c weights
+            end
+        end        
+        if isempty(avoid) == 0
+            for j = numel(avoid) :-1 : 1
+                [row, column, v] = find(choosefrom==avoid(j));
+                choosefrom(row) = [];
+            end
+        end    
+
+        % Choosing weights to delete
+        if todelete > numel(choosefrom)
+            deleted = choosefrom;
+        else
+            indices = randperm(numel(choosefrom), todelete);
+            deleted = choosefrom(indices);
+        end           
+        dummy(deleted,i) = 0;
+        dummy(i, deleted) = 0;
+    end
+    
+    % Listing weights to delete
+    not_eliminated = find(dummy);
+    eliminated = 1:numel(W.state);
+    eliminated(not_eliminated) = [];
+    W.eliminated = eliminated;
+      
+% Delete weights based on P.connection_density probabilistically
+else
+    nbof_eliminated = round(  numel(W.state) * (1-P.connection_density)   );
+    W.eliminated = randperm(numel(W.state), nbof_eliminated);
+    W.eliminated = sort([W.eliminated, diagonal]);
+end
+
 W.state(W.eliminated) = 0;
 
 %% Store
