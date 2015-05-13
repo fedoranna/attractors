@@ -62,6 +62,8 @@ end
 % end
 
 A.T.correctness = A.T.outputs == A.D.testingset_O;
+corr_matrix = corrcoef(A.T.outputs, A.D.testingset_O);
+A.T.correlation = corr_matrix(1,2);
 
 % Possible fitness measures
 A.T.scores = mean(A.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern

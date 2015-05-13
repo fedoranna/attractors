@@ -154,7 +154,7 @@ switch v
         P.strenght_of_memory_traces = 0;   % multiplier of rand weights
 
         % Architecture
-        P.nbof_neurons = 1000;               % number of neurons: 1000
+        P.nbof_neurons = 5;               % number of neurons: 1000
         P.connection_density = [];           % probabilistic; proportion of existing weights to all possible weights; 0 to 1
         P.connections_per_neuron = round(P.nbof_neurons/2); % the exact number of connections per neuron for each neuron
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
@@ -162,7 +162,7 @@ switch v
         P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
-        P.nbof_patterns = 40;                % number of patterns in the testing set
+        P.nbof_patterns = 3;                % number of patterns in the testing set
         P.lengthof_patterns = P.nbof_neurons; % the length of patterns; = P.nbof_neurons
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
