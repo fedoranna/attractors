@@ -163,7 +163,7 @@ switch v
         P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
-        P.nbof_patterns = 9;                % number of patterns in the testing set
+        P.nbof_patterns = 40;                % number of patterns in the testing set
         P.lengthof_patterns = P.nbof_neurons; % the length of patterns; = P.nbof_neurons
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
@@ -173,7 +173,8 @@ switch v
         P.learning_rule = 'covariance1';        % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;                % learning rate
         P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
-        P.automatic_threshold = 1;          % 1/0; automatic threshold
+        P.autothreshold_aftertraining = 0;          % 1/0; automatic threshold after training
+        P.autothreshold_duringtesting = 1;
         P.sparseness_difference = 0.01;      % maximum allowable difference between input and output sparseness wehn setting threshold
         P.threshold_incr = 0.009;             % the increment with which to change the threshold during threshold setting
         P.threshold_setting_timeout = 1000; % maximum number of steps when setting the threshold
@@ -182,7 +183,10 @@ switch v
         P.timeout = 100;                      % the maximum number of recurrent cycles
         P.convergence_threshold = 0;        % convergence for recurrence
         P.tolerance = 0.1;                  % tolerance for the difference between output and active/inactive values
-    
+        P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
+        A.P.field_ratio = 0.25;             % external field / internal field, see Rolls, 2012
+        A.P.gain_factor = 0.5;              % slope of the threshold linear activation function
+        
     otherwise
         'Error: Parameter set was not found!'
 end

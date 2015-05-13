@@ -3,7 +3,7 @@ addpath(genpath('C:\Matlab_functions\Attractor\'));
 
 %% Parameters for demo
 
-repetitions = 100;
+repetitions = 1;
 beeps = 0;
 
 S.popsize = 1;                    % number of attractor networks in the population

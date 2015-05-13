@@ -28,6 +28,8 @@ end
 D.testingset_I = D.testingset;
 D.testingset_O = D.testingset;
 
+P.sparseness_input = sparseness(A.D.testingset);
+
 %% Choose trainingset
 
 if strcmp(P.trainingseed, 'noseed')
@@ -47,6 +49,7 @@ D.trainingset = sortrows(D.trainingset);
 %% Layer of neurons
 
 L.output = zeros(1, P.nbof_neurons);
+L.thresholds = repmat(P.threshold, 1, size(L.output,2)); % row vector for all neurons for asynchoronous update and individual thresholds
 
 %% Weights
 

@@ -77,7 +77,7 @@ switch A.P.learning_rule
         'Error: learning rule is unknown!'
 end
 
-if A.P.automatic_threshold
+if A.P.autothreshold_aftertraining
     A = set_threshold(A);
 end
 

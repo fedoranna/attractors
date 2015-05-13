@@ -1,14 +1,12 @@
-function A = set_threshold(A)
-
-sparseness_input = sparseness(A.D.testingset_I);
+function A = set_threshold_aftertraining(A)
 
 outputs = NaN(size(A.D.testingset_I, 1), A.P.nbof_neurons);
 for p = 1 : size(A.D.testingset_I, 1)         % patterns
     
-    output = A.P.activation_function(A.D.testingset_I(p,:) * A.W.state, A.P.threshold);
+    output = A.P.activation_function(A.D.testingset_I(p,:) * A.W.state, A.P.threshold, A.P.gain_factor);
     for r = 1 : A.P.timeout
         previous_output = output;
-        output = A.P.activation_function(previous_output * A.W.state, A.P.threshold);
+          output = A.P.activation_function(previous_output * A.W.state, A.P.threshold, A.P.gain_factor);
         diff = abs(output - previous_output);
         if sum(diff) <= A.P.convergence_threshold
             break
@@ -17,12 +15,11 @@ for p = 1 : size(A.D.testingset_I, 1)         % patterns
     outputs(p,:) = output;
     
 end
-sparseness_output = sparseness(output);
+sparseness_output = sparseness(outputs);
 
-%%
 incr_steps = 0;
 previous_inc=0;
-while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
+while abs(A.P.sparseness_input - sparseness_output) > A.P.sparseness_difference
     
     % Timeout
     incr_steps = incr_steps + 1;
@@ -31,7 +28,7 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
     end
     
     % Change threshold
-    if sparseness_output < sparseness_input
+    if sparseness_output < A.P.sparseness_input
         inc = - A.P.threshold_incr;
     else
         inc = + A.P.threshold_incr;
@@ -48,10 +45,10 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
     outputs = NaN(size(A.D.testingset_I, 1), A.P.nbof_neurons);
     for p = 1 : size(A.D.testingset_I, 1)         % patterns
         
-        output = A.P.activation_function(A.D.testingset_I(p,:) * A.W.state, A.P.threshold);
+        output = A.P.activation_function(A.D.testingset_I(p,:) * A.W.state, A.P.threshold, A.P.gain_factor);
         for r = 1 : A.P.timeout
             previous_output = output;
-            output = A.P.activation_function(previous_output * A.W.state, A.P.threshold);
+            output = A.P.activation_function(previous_output * A.W.state, A.P.threshold, A.P.gain_factor);
             diff = abs(output - previous_output);
             if sum(diff) <= A.P.convergence_threshold
                 break
@@ -60,7 +57,7 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
         outputs(p,:) = output;
         
     end
-    sparseness_output = sparseness(output);
+    sparseness_output = sparseness(outputs);
     
 end
 

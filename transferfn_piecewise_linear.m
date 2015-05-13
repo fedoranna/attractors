@@ -1,4 +1,4 @@
-function activation = transferfn_piecewise_linear(weightedsum, threshold)
+function activation = transferfn_piecewise_linear(weightedsum, threshold, dummy)
 
 activation = NaN(size(weightedsum));
 for i = 1:numel(weightedsum)
