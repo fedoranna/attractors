@@ -28,7 +28,7 @@ end
 D.testingset_I = D.testingset;
 D.testingset_O = D.testingset;
 
-P.sparseness_input = sparseness(A.D.testingset);
+P.sparseness_input = sparseness(D.testingset);
 
 %% Choose trainingset
 
@@ -83,6 +83,9 @@ if isempty(P.connection_density)
         all = sum(dummy, 1);
         current = all(i);
         todelete = current - c;
+        if todelete < 0
+            todelete = 0;
+        end
         
         choosefrom = find(dummy(:,i)); % the index of nonzero elements
         
@@ -124,6 +127,7 @@ else
 end
 
 W.state(W.eliminated) = 0;
+P.attempted_dilution = P.connections_per_neuron / P.nbof_neurons; % the exact connection density
 
 %% Store
 

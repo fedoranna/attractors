@@ -5,6 +5,6 @@ for i = 1:numel(weightedsum)
     if weightedsum(i) <= threshold
         activation(i) = 0;
     else 
-        activation(i) = A.P.gain_factor * weightedsum(i);
+        activation(i) = gain * weightedsum(i);
     end
 end

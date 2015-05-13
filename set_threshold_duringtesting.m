@@ -2,11 +2,10 @@
 
 function A = set_threshold_duringtesting(A, neuron)
 
-output = A.P.activation_function(A.L.local_field, A.P.thresholds, A.P.gain_factor); % column_vector
+output = A.P.activation_function(A.L.local_field, A.L.thresholds(neuron), A.P.gain_factor); % column_vector
 sparseness_output = sparseness(output);
 sparseness_input = A.P.sparseness_input;
 
-%%
 incr_steps = 0;
 previous_inc = 0;
 while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
@@ -27,12 +26,12 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
     if inc == -previous_inc
         break
     else
-        A.P.threshold = A.P.threshold + inc;
+        A.L.thresholds(neuron) = A.L.thresholds(neuron) + inc;
         previous_inc = inc;
     end
     
     % Recalculate outputs
-    output = A.P.activation_function(A.L.local_field, A.P.thresholds, A.P.gain_factor); % column_vector
+    output = A.P.activation_function(A.L.local_field, A.L.thresholds(neuron), A.P.gain_factor); % column_vector
     sparseness_output = sparseness(output);
     
 end

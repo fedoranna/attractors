@@ -143,7 +143,7 @@ switch v
         P.tolerance = 0.1;                  % tolerance for the difference between output and active/inactive values
         
     case 182012 % as in Rolls, 2012
-
+%%
         % Random seeds                      % 'noseed' or a number bw 0 and 2^31-2;                      
         P.inputseed = 'noseed';
         P.weightseed = 'noseed'; 
@@ -154,12 +154,11 @@ switch v
         P.strenght_of_memory_traces = 0;   % multiplier of rand weights
 
         % Architecture
-        P.nbof_neurons = 1000;               % number of neurons
+        P.nbof_neurons = 1000;               % number of neurons: 1000
         P.connection_density = [];           % probabilistic; proportion of existing weights to all possible weights; 0 to 1
-        P.connections_per_neuron = P.nbof_neurons/2; % the exact number of connections per neuron for each neuron
-        P.dilution = P.connections_per_neuron / P.nbof_neurons; % the exact connection density
+        P.connections_per_neuron = round(P.nbof_neurons/2); % the exact number of connections per neuron for each neuron
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
-        P.threshold = 0;                  % activation threshold for transferfn_step
+        P.threshold = 0;                  % activation threshold for transferfn_step; starting value when autoupdate enabled
         P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
 
         % Input    
@@ -170,23 +169,24 @@ switch v
 
         % Training
         P.trained_percentage = 100;         % percentage of selected items for training from the testing set
-        P.learning_rule = 'covariance1';        % 'Hebbian1', 'Hebbian2', or 'covariance'
+        P.learning_rule = 'covariance2';        % 'Hebbian1', 'Hebbian2', or 'covariance'
         P.learning_rate = 1;                % learning rate
         P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
         P.autothreshold_aftertraining = 0;          % 1/0; automatic threshold after training
         P.autothreshold_duringtesting = 1;
         P.sparseness_difference = 0.01;      % maximum allowable difference between input and output sparseness wehn setting threshold
         P.threshold_incr = 0.009;             % the increment with which to change the threshold during threshold setting
-        P.threshold_setting_timeout = 1000; % maximum number of steps when setting the threshold
+        P.threshold_setting_timeout = 100; % maximum number of steps when setting the threshold
 
         % Testing    
-        P.timeout = 100;                      % the maximum number of recurrent cycles
+        P.timeout = 10;                      % the maximum number of recurrent cycles
         P.convergence_threshold = 0;        % convergence for recurrence
         P.tolerance = 0.1;                  % tolerance for the difference between output and active/inactive values
         P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
-        A.P.field_ratio = 0.25;             % external field / internal field, see Rolls, 2012
-        A.P.gain_factor = 0.5;              % slope of the threshold linear activation function
-        
+        P.field_ratio = 0.25;             % external field / internal field, see Rolls, 2012
+        P.gain_factor = 0.5;              % slope of the threshold linear activation function
+
+        %%
     otherwise
         'Error: Parameter set was not found!'
 end
