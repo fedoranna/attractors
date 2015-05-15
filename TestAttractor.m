@@ -46,7 +46,8 @@ else % asynchronous update
             % makes the local field also full of Inf;
             % When there is noise, A.D.testingset_I is never 0, so there
             % will be no Infs in the local field and it ruins it somehow
-                       
+            % Incomplete input also ruins performance
+            
             if A.P.autothreshold_duringtesting
                 A = set_threshold_duringtesting(A, neuron);
             end

@@ -26,15 +26,15 @@ if P.inactive_input == -1
 end
 
 D.testingset_O = D.testingset;
-switch P.testing_type
-    case 'complete'
-        D.testingset_I = D.testingset_O;        
-    case 'noisy'
-        D.testingset_I = D.testingset_O + abs(randn(size(D.testingset_O)) * P.noise);
-    
-    otherwise
-        'Error: testing type is unknown!'
-end
+D.testingset_I = D.testingset_O;        
+
+% Make input noisy
+D.testingset_I = D.testingset_O + randn(size(D.testingset_O)) * P.noise;
+
+% Make input incomplete
+nbof_deleted = round((P.missing_perc/100) * numel(D.testingset_O));
+deleted = randperm(numel(D.testingset_O), nbof_deleted);
+D.testingset_I(deleted) = 0;
 
 P.sparseness_input = sparseness(D.testingset);
 

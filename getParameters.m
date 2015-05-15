@@ -158,6 +158,7 @@ switch v
         P.connection_density = [];           % probabilistic; proportion of existing weights to all possible weights; 0 to 1
         %P.connections_per_neuron = round(P.nbof_neurons/2); % the exact number of connections per neuron for each neuron
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
+        P.gain_factor = 0.5;              % slope of the threshold linear activation function
         P.threshold = 0;                  % activation threshold for transferfn_step; starting value when autoupdate enabled
         P.allow_selfloops = 0;              % whether to allow self-loops; 1/0
 
@@ -168,8 +169,6 @@ switch v
         P.lengthof_patterns = P.nbof_neurons; % the length of patterns; = P.nbof_neurons
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
-        P.testing_type = 'noisy';        % complete, incomplete, noisy
-        P.noise = 0.0000000001;
         
         % Training
         P.trained_percentage = 100;         % percentage of selected items for training from the testing set
@@ -188,7 +187,8 @@ switch v
         P.tolerance = 0.1;                  % if>0 then binarizes output; tolerance for the difference between output and active/inactive values
         P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
         P.field_ratio = 0.25;             % external field / internal field, see Rolls, 2012
-        P.gain_factor = 0.5;              % slope of the threshold linear activation function
+        P.noise = 0.001;        % size of noise when testing_type is 'noisy'
+        P.missing_perc = 0.5;                % the percentage of missing input bits when testing_type is 'incomplete'
         
         %%
     otherwise
