@@ -22,7 +22,7 @@ if A.P.synchronous_update
 else % asynchronous update
     
     a = A.P.sparseness_input;
-    order = randperm(size(A.D.testingset_I, 1), size(A.D.testingset_I, 1));
+    order = randperm(A.P.nbof_neurons, A.P.nbof_neurons);
     A.L.outputs = A.D.testingset_I; % all patterns, all neurons
     
     for n = 1:numel(order)
@@ -32,14 +32,21 @@ else % asynchronous update
             previous_output = A.L.outputs(:, neuron);
             
             internal_field = A.L.outputs * A.W.state(:, neuron); % column vector for the internal activation of 1 neuron to all patterns
-            s = (A.P.field_ratio * internal_field) ./ A.D.testingset_I(:,neuron);
+            s = (A.P.field_ratio * internal_field) ./ A.D.testingset_I(:,neuron); % column vector
+            % There could be NaNs if 0/0, (or Inf if x/0, but it seems it does not work without Infs)
             for i = 1:numel(s)
-                if isnan(s(i))
+                if isnan(s(i)) 
                     s(i) = 0;
                 end
             end
             external_field = A.D.testingset_I(:,neuron) .* (s/a);
             A.L.local_field = internal_field + external_field; % column vector for the current neuron and each pattern
+            
+            % s will be full of Inf and -Inf where A.D.testingset_I=0. This
+            % makes the local field also full of Inf;
+            % When there is noise, A.D.testingset_I is never 0, so there
+            % will be no Infs in the local field and it ruins it somehow
+                       
             if A.P.autothreshold_duringtesting
                 A = set_threshold_duringtesting(A, neuron);
             end
@@ -57,15 +64,15 @@ else % asynchronous update
 end
 
 % Tolerance threshold
-% if A.P.binarize_output
-%     A.T.outputs = binarize(A.T.outputs, A.P.tolerance);
-% end
+if A.P.tolerance > 0
+    A.T.outputs = binarize(A.T.outputs, A.P.tolerance, A.P.inactive_input);
+end
 
 A.T.correctness = A.T.outputs == A.D.testingset_O;
 corr_matrix = corrcoef(A.T.outputs, A.D.testingset_O);
-A.T.correlation = corr_matrix(1,2);
 
 % Possible fitness measures
+A.T.correlation = corr_matrix(1,2);
 A.T.scores = mean(A.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern
 A.T.avg_score = mean(A.T.scores);           % 0 to 1; avg score on all testing patterns
 A.T.avg_score_perc = mean(A.T.scores)*100;  % 0 to 100; avg score percentage on all testing patterns

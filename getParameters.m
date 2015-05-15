@@ -154,19 +154,23 @@ switch v
         P.strenght_of_memory_traces = 0;   % multiplier of rand weights
 
         % Architecture
-        P.nbof_neurons = 5;               % number of neurons: 1000
+        P.nbof_neurons = 1000;               % number of neurons: 1000
         P.connection_density = [];           % probabilistic; proportion of existing weights to all possible weights; 0 to 1
-        P.connections_per_neuron = round(P.nbof_neurons/2); % the exact number of connections per neuron for each neuron
+        %P.connections_per_neuron = round(P.nbof_neurons/2); % the exact number of connections per neuron for each neuron
         P.activation_function = @transferfn_step;      % @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.threshold = 0;                  % activation threshold for transferfn_step; starting value when autoupdate enabled
-        P.allow_selfloops = 1;              % whether to allow self-loops; 1/0
+        P.allow_selfloops = 0;              % whether to allow self-loops; 1/0
 
         % Input    
-        P.nbof_patterns = 3;                % number of patterns in the testing set
+        P.nbof_patterns = 40;                % number of patterns in the testing set
+            P.loading = 10;                      % loading = nbof_patterns/connections_per_neuron
+            P.connections_per_neuron = P.nbof_patterns*P.loading; % the exact number of connections per neuron for each neuron
         P.lengthof_patterns = P.nbof_neurons; % the length of patterns; = P.nbof_neurons
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
-
+        P.testing_type = 'noisy';        % complete, incomplete, noisy
+        P.noise = 0.0000000001;
+        
         % Training
         P.trained_percentage = 100;         % percentage of selected items for training from the testing set
         P.learning_rule = 'covariance2';        % 'Hebbian1', 'Hebbian2', or 'covariance'
@@ -174,18 +178,18 @@ switch v
         P.forgetting_rate = 1;             % weights are multiplied by this number before each trainig session
         P.autothreshold_aftertraining = 0;          % 1/0; automatic threshold after training
         P.autothreshold_duringtesting = 1;
-        P.sparseness_difference = 0.01;      % maximum allowable difference between input and output sparseness wehn setting threshold
-        P.threshold_incr = 0.009;             % the increment with which to change the threshold during threshold setting
+        P.sparseness_difference = 0.001;      % maximum allowable difference between input and output sparseness wehn setting threshold
+        P.threshold_incr = 0.0001;             % the increment with which to change the threshold during threshold setting
         P.threshold_setting_timeout = 100; % maximum number of steps when setting the threshold
 
         % Testing    
-        P.timeout = 10;                      % the maximum number of recurrent cycles
+        P.timeout = 30;                      % the maximum number of recurrent cycles
         P.convergence_threshold = 0;        % convergence for recurrence
-        P.tolerance = 0.1;                  % tolerance for the difference between output and active/inactive values
+        P.tolerance = 0.1;                  % if>0 then binarizes output; tolerance for the difference between output and active/inactive values
         P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
         P.field_ratio = 0.25;             % external field / internal field, see Rolls, 2012
         P.gain_factor = 0.5;              % slope of the threshold linear activation function
-
+        
         %%
     otherwise
         'Error: Parameter set was not found!'

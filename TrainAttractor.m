@@ -8,6 +8,7 @@ parse(ip, A, varargin{:});
 A = ip.Results.A; 
 weightVisualizer = ip.Results.weightVisualizer;
 
+%%
 switch A.P.learning_rule
     case 'Hebbian1' % Rolls, 2012, p45
         inc = A.P.learning_rate * (A.D.trainingset'* A.D.trainingset);
@@ -49,13 +50,14 @@ switch A.P.learning_rule
     
     case 'covariance2' % same as covariance1 but mean activity is calculated per neuron, and not per network
         a = mean(A.D.trainingset, 1); % this is a row vector
+        %a = sparseness(A.D.trainingset);
         N = size(A.D.trainingset, 1);    
         arep = repmat(a,N,1);                               
         inc = (1./(N*(a'*a))) .* ((A.D.trainingset-arep)' * (A.D.trainingset-arep));
         
         % Problem 1: if there is a neuron which is never active, then there
-        % will be Infs in the first part and 0s in the second part and
-        % Inf*0 = NaN. The whole inc will be NaN!
+        % will be 1/0=Infs in the first part and 0s in the second part and
+        % Inf*0 = NaN.
         for i = 1:numel(inc)
             if isnan(inc(i))
                 inc(i) = 0;
@@ -63,7 +65,9 @@ switch A.P.learning_rule
         end
         
         % Problem 2: if there is only one pattern, trainingset-arep = 0s,
-        % so the whole inc will be 0s
+        % so the whole inc will be 0s; the rule below reduces the training
+        % to the simplest Hebbian rule (it is not a covariance rule
+        % anymore)
         if N == 1
             inc = A.D.trainingset' * A.D.trainingset;
         end

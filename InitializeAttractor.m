@@ -25,8 +25,16 @@ if P.inactive_input == -1
     P.nbof_patterns = size(D.testingset, 1);
 end
 
-D.testingset_I = D.testingset;
 D.testingset_O = D.testingset;
+switch P.testing_type
+    case 'complete'
+        D.testingset_I = D.testingset_O;        
+    case 'noisy'
+        D.testingset_I = D.testingset_O + abs(randn(size(D.testingset_O)) * P.noise);
+    
+    otherwise
+        'Error: testing type is unknown!'
+end
 
 P.sparseness_input = sparseness(D.testingset);
 
