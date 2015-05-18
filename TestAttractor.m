@@ -39,7 +39,7 @@ else % asynchronous update
                     s(i) = 0;
                 end
             end
-            external_field = A.D.testingset_I(:,neuron) .* (s/a);
+            external_field = A.D.testingset_I(:,neuron) ;%.* (s/a);
             A.L.local_field = internal_field + external_field; % column vector for the current neuron and each pattern
             
             % s will be full of Inf and -Inf where A.D.testingset_I=0. This
@@ -79,4 +79,4 @@ A.T.avg_score = mean(A.T.scores);           % 0 to 1; avg score on all testing p
 A.T.avg_score_perc = mean(A.T.scores)*100;  % 0 to 100; avg score percentage on all testing patterns
 A.T.nbof_correct = sum(A.T.scores == 1);    % 0 to P.nbof_patterns; nb of perfectly correct testing patterns
 A.T.nbof_90perc_correct = sum(A.T.scores > 0.9);
-A.T.percof_correct = (A.T.nbof_correct / A.P.nbof_patterns) * 100; % 0 to 100; percentage of perfectly correct testing patterns
+A.T.percof_correct = (A.T.nbof_correct / size(A.T.outputs, 1)) * 100; % 0 to 100; percentage of perfectly correct testing patterns

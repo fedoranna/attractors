@@ -1,4 +1,4 @@
-function [G, fitness] = AttractorPop(S)
+function [G, S] = AttractorPop(S)
 
 %% Initialize population
 
@@ -13,6 +13,7 @@ end
 P = getParameters(S.parametersets(1));
 if S.nbof_global_testingpatterns > 0
     global_problem = double(rand(S.nbof_global_testingpatterns, P.lengthof_patterns) <= P.sparseness);
+    S.global_problem = global_problem;
 end
 
 % First generation
@@ -23,7 +24,7 @@ for i = 1:S.popsize
     % Seeds
     if strcmp(S.popseed, 'noseed')    
     else
-        P.inputseed = seeds(1);
+        P.inputseed = seeds(i);
         P.weightseed = seeds(i*2);            
         P.trainingseed = seeds(i*3);
     end   
@@ -46,7 +47,7 @@ end
 
 %% Evolution
 
-S.nbof_selected = round(S.popsize * (S.selected_perc/100));
+S.nbof_selected = ceil(S.popsize * (S.selected_perc/100));
 fitness = NaN(S.popsize, S.nbof_generations);
 
 for g = 2:S.nbof_generations
@@ -56,7 +57,7 @@ for g = 2:S.nbof_generations
         fitness(i,g-1) = getfield(G{i, g-1}.T, S.fitness_measure);
     end
     
-    % Selection    
+    % Select the best output patterns  
     if strcmp(S.selection_type, 'truncation')
         
         [x, index] =  sortrows(fitness, g-1); % ascending order        
@@ -101,6 +102,7 @@ end
 for i = 1:S.popsize
     fitness(i,end) = getfield(G{i, end}.T, S.fitness_measure);
 end
+S.fitness = fitness;
 
 
 
