@@ -1,49 +1,49 @@
 clear all
 addpath(genpath('C:\Matlab_functions\Attractor\'));
 
-mode = 's'; % selection or individuals
+mode = 'i'; % selection or individuals
 %% Parameters for selection
 
 if mode == 's'
-    repetitions = 1;
-    beeps = 0;
+    repetitions = 3;
+    beeps = 3;
 
     S.popsize = 10;                    % number of attractor networks in the population
-    S.nbof_generations = 10;             % number of generations of attractor networks
+    S.nbof_generations = 50;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
     S.selected_perc = 20;               % 0 to 100; the selected percentage of individuals for reproduction
-    S.nbof_global_testingpatterns = 10;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
+    S.nbof_global_testingpatterns = 5;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 1;                   % 0 or 1; retraining in each generation with the selected outputs
     S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
-
-    S.parametersets = zeros(1, S.popsize) + 182012; % ID of the parameterset for the attractors
-    S.popseeds = [1];
-    felirat = {};
-    next = 1;
+    S.mutation_rate = 0;                % probability of mutation/bit during reproduction
+    
+    S.parametersets = zeros(1, S.popsize) + 1820122; % ID of the parameterset for the attractors
+    S.popseeds = [1 2 3];
 end
 
 %% Parameters for testing individual networks
 
 if mode == 'i'
-    repetitions = 1;
+    repetitions = 10;                   % this will be the number of tested networks
     beeps = 0;
-
-    S.popsize = 1;                    % number of attractor networks in the population
+    S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
+    S.parametersets = zeros(1, S.popsize) + 182012; % ID of the parameterset for the attractors
+    S.popseeds = [];
+    
+    % Don't change these when testing individual networks!
+    S.popsize = 1;                    % should be 1 if trained_percentage=100
     S.nbof_generations = 1;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
     S.selected_perc = 0;               % 0 to 100; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 0;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 0;                   % 0 or 1; retraining in each generation with the selected outputs
-    S.fitness_measure = 'percof_correct';    % choose from the fields of T - see in TestAttractor fn
-
-    S.parametersets = zeros(1, S.popsize) + 182012; % ID of the parameterset for the attractors
-    S.popseeds = [1];
-    felirat = {};
-    next = 1;
+    S.mutation_rate = 0;                % probability of mutation/bit during reproduction
+        
 end
 
 %% Run
 
+S.pop_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 allscores = NaN(repetitions, S.nbof_generations);
 if numel(S.popseeds) < repetitions
     rng shuffle
@@ -58,36 +58,36 @@ end
 
 %% Plot
 
-figure
-hold all
-for r = 1:repetitions
-    plot(1:S.nbof_generations, F(r,:), 'LineWidth', 2)
-    %felirat(next) = {['retraining = ', num2str(S.retraining), '; changing testing patterns = ', num2str(S.change_testingset)]};
-    %next=next+1;
-    %legend(felirat, 'Location', 'SouthEast')
+if mode=='s'
+    figure
+    hold all
+    for r = 1:repetitions
+        plot(1:S.nbof_generations, F(r,:), 'LineWidth', 2)
+    end
+    xlabel('Generations')
+    ylabel([{'Average fitness of the population'};{'(proportion of correctly recalled output bits)'}])
+    set(gca, 'YLim', [0.5,1.0])
+
+    cim = ['Synchronous update, m=', num2str(S.mutation_rate)];
+    title(cim)
+    print('-dpng', ['C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\', cim, '.png'])
+    close
 end
-xlabel('Generations')
-ylabel('Average fitness of the population (% of recalled patterns)')
-set(gca, 'YLim', [0,101])
-close
+
+if mode=='i'
+    boxplot(F)
+    cim = ['Pop. ', S.pop_ID];
+    title(cim)
+    print('-dpng', ['C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\', cim, '.png'])
+    close
+end
 
 %% Monitor
 
-% ylabel('Average fitness of the population (closeness to solution)')
-% set(gca, 'YLim', [0,1])
-%figure
-%plot(max(fitness))
-%mean(mean(G{end}.T.outputs))
-S.fitness
-boxplot(S.fitness)
-%G{1}.D.trainingset
-%G{1}.T.outputs
-
-F;
-
-%boxplot(F)
-%mean(F)
-%hist(F)
+S.fitness;
+%boxplot(S.fitness)
+F
+mutation_rate_pergeneration = 5*50*2*S.mutation_rate;
 
 %% Visualize weights
 

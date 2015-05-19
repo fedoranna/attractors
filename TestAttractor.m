@@ -14,6 +14,9 @@ if A.P.synchronous_update
             if sum(diff) <= A.P.convergence_threshold
                 break
             end
+            if A.P.autothreshold_duringtesting
+                A = set_threshold_duringtesting(A, neuron);
+            end
         end
         A.T.outputs(p,:) = A.L.output;
         
@@ -72,7 +75,8 @@ end
 A.T.correctness = A.T.outputs == A.D.testingset_O;
 corr_matrix = corrcoef(A.T.outputs, A.D.testingset_O);
 
-% Possible fitness measures
+%%  Possible fitness measures
+
 A.T.correlation = corr_matrix(1,2);
 A.T.scores = mean(A.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern
 A.T.avg_score = mean(A.T.scores);           % 0 to 1; avg score on all testing patterns

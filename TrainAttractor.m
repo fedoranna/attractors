@@ -18,9 +18,9 @@ switch A.P.learning_rule
         
     case 'Hebbian2'
         a = A.P.activation_function(A.W.state * A.D.trainingset', A.P.threshold)'; % activation before learning for each pattern
-        inc = a' * a;
+        inc = A.P.learning_rate * (a' * a);
         A.W.state = A.W.state * A.P.forgetting_rate;
-        A.W.state = A.W.state + A.P.learning_rate * inc;
+        A.W.state = A.W.state +  inc;
         A.W.state(A.W.eliminated) = 0;
         
     case 'covariance1' % Rolls, 2012    
@@ -69,7 +69,7 @@ switch A.P.learning_rule
         % to the simplest Hebbian rule (it is not a covariance rule
         % anymore)
         if N == 1
-            inc = A.D.trainingset' * A.D.trainingset;
+            inc = (1./(N*(a'*a))) .* A.D.trainingset' * A.D.trainingset;
         end
 
         A.W.state = A.W.state * A.P.forgetting_rate;
@@ -82,7 +82,7 @@ switch A.P.learning_rule
 end
 
 if A.P.autothreshold_aftertraining
-    A = set_threshold(A);
+    A = set_threshold_aftertraining(A);
 end
 
 

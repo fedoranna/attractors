@@ -52,6 +52,25 @@ fitness = NaN(S.popsize, S.nbof_generations);
 
 for g = 2:S.nbof_generations
     
+%     % Mutation before selection               DO NOT DELETE
+%     for i = 1:S.popsize
+%         mutation_matrix = rand(size(G{i, g-1}.T.outputs));
+%         for j = 1:numel(G{i, g-1}.T.outputs)
+%             if mutation_matrix(j) < S.mutation_rate
+%                 G{i, g-1}.T.outputs(j) = 1 - G{i, g-1}.T.outputs(j);
+%             end
+%         end
+%         G{i, g-1}.T.correctness = G{i, g-1}.T.outputs == G{i, g-1}.D.testingset_O;
+%         corr_matrix = corrcoef(G{i, g-1}.T.outputs, G{i, g-1}.D.testingset_O);
+%         G{i, g-1}.T.correlation = corr_matrix(1,2);
+%         G{i, g-1}.T.scores = mean(G{i, g-1}.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern
+%         G{i, g-1}.T.avg_score = mean(G{i, g-1}.T.scores);           % 0 to 1; avg score on all testing patterns
+%         G{i, g-1}.T.avg_score_perc = mean(G{i, g-1}.T.scores)*100;  % 0 to 100; avg score percentage on all testing patterns
+%         G{i, g-1}.T.nbof_correct = sum(G{i, g-1}.T.scores == 1);    % 0 to P.nbof_patterns; nb of perfectly correct testing patterns
+%         G{i, g-1}.T.nbof_90perc_correct = sum(G{i, g-1}.T.scores > 0.9);
+%         G{i, g-1}.T.percof_correct = (G{i, g-1}.T.nbof_correct / size(G{i, g-1}.T.outputs, 1)) * 100; % 0 to 100; percentage of perfectly correct testing patterns
+%     end            
+    
     % Collecting the fitness measure    
     for i = 1:S.popsize
         fitness(i,g-1) = getfield(G{i, g-1}.T, S.fitness_measure);
@@ -69,6 +88,18 @@ for g = 2:S.nbof_generations
         end   
     
     end
+    
+    % Mutation after selection
+    if S.mutation_rate > 0
+        for i = 1 : numel(selected_outputs)
+            mutation_matrix = rand(size(selected_outputs{i}));
+            for j = 1:numel(selected_outputs{i})
+                if mutation_matrix(j) < S.mutation_rate
+                    selected_outputs{i}(j) = 1 - selected_outputs{i}(j);
+                end
+            end
+        end
+    end            
   
     % "Reproduction": feeding back the selected outputs - retrain and test networks
     next = 1;

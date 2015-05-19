@@ -30,3 +30,11 @@ capacity = (C * k) ./ (a .* log(1./a));
 plot(sparseness, capacity)
 xlabel('Proportion of 1s in the input')
 ylabel('Capacity of the network')
+
+%% Example in Rolls, 2012 paper, p47
+
+k = 0.2:0.01:0.3;
+C = 12000;
+a = 0.02;
+
+capacity = (C * k) / (a * log(1/a)); % in the paper capacity = 36000 -> k was about 0.235    

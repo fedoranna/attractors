@@ -14,19 +14,19 @@ else
 end
 
 % If input consists of 0s and 1s; might not be unique!
-if P.inactive_input == 0 
+if P.inactive_input == 0
     D.testingset = double(rand(P.nbof_patterns, P.lengthof_patterns) <= P.sparseness);
 end
 
 % If input consists of -1 and +1; unique, but the number of patterns might be less than specified in the parameters
-if P.inactive_input == -1 
+if P.inactive_input == -1
     D.testingset = 2*floor(2*rand(P.nbof_patterns, P.nbof_neurons))-1; % Create random binary patterns of -1 and +1; each input pattern is a row in the matrix
     D.testingset = unique(D.testingset, 'rows');
     P.nbof_patterns = size(D.testingset, 1);
 end
 
 D.testingset_O = D.testingset;
-D.testingset_I = D.testingset_O;        
+D.testingset_I = D.testingset_O;
 
 % Make input noisy
 D.testingset_I = D.testingset_O + randn(size(D.testingset_O)) * P.noise;
@@ -80,62 +80,68 @@ else
 end
 
 % Delete weights based on P.connections_per_neuron (tries to ensure an exact number of weights) as in Rolls, 2012
-if isempty(P.connection_density) 
-    c = P.connections_per_neuron;
-    N = size(W.state,1);
-    dummy = ones(size(W.state));
+switch P.weight_deletion_mode
     
-    dummy(diagonal) = 0;
-    for i = 1:N
-        avoid = [];
-        all = sum(dummy, 1);
-        current = all(i);
-        todelete = current - c;
-        if todelete < 0
-            todelete = 0;
+    case 'probabilistic'
+        
+        nbof_eliminated = round(  numel(W.state) * (1-P.connection_density)   );
+        W.eliminated = randperm(numel(W.state), nbof_eliminated);
+        W.eliminated = sort([W.eliminated, diagonal]);
+        
+    case 'exact'        
+        
+        P.connections_per_neuron = P.connection_density * P.nbof_neurons;
+        P.loading = P.nbof_patterns/P.connections_per_neuron;
+        
+        c = P.connections_per_neuron;
+        N = size(W.state,1);
+        dummy = ones(size(W.state));
+        
+        dummy(diagonal) = 0;
+        for i = 1:N
+            avoid = [];
+            all = sum(dummy, 1);
+            current = all(i);
+            todelete = current - c;
+            if todelete < 0
+                todelete = 0;
+            end
+            
+            choosefrom = find(dummy(:,i)); % the index of nonzero elements
+            
+            % Avoiding those neurons that already have c weights
+            for j = 1:numel(all)
+                if all(j) <= c
+                    avoid = [avoid, j]; % the index of neurons that already have c weights
+                end
+            end
+            if isempty(avoid) == 0
+                for j = numel(avoid) :-1 : 1
+                    [row, column, v] = find(choosefrom==avoid(j));
+                    choosefrom(row) = [];
+                end
+            end
+            
+            % Choosing weights to delete
+            if todelete > numel(choosefrom)
+                deleted = choosefrom;
+            else
+                indices = randperm(numel(choosefrom), todelete);
+                deleted = choosefrom(indices);
+            end
+            dummy(deleted,i) = 0;
+            dummy(i, deleted) = 0;
         end
         
-        choosefrom = find(dummy(:,i)); % the index of nonzero elements
-        
-        % Avoiding those neurons that already have c weights
-        for j = 1:numel(all)
-            if all(j) <= c
-                avoid = [avoid, j]; % the index of neurons that already have c weights
-            end
-        end        
-        if isempty(avoid) == 0
-            for j = numel(avoid) :-1 : 1
-                [row, column, v] = find(choosefrom==avoid(j));
-                choosefrom(row) = [];
-            end
-        end    
-
-        % Choosing weights to delete
-        if todelete > numel(choosefrom)
-            deleted = choosefrom;
-        else
-            indices = randperm(numel(choosefrom), todelete);
-            deleted = choosefrom(indices);
-        end           
-        dummy(deleted,i) = 0;
-        dummy(i, deleted) = 0;
-    end
-    
-    % Listing weights to delete
-    not_eliminated = find(dummy);
-    eliminated = 1:numel(W.state);
-    eliminated(not_eliminated) = [];
-    W.eliminated = eliminated;
-      
-% Delete weights based on P.connection_density probabilistically
-else
-    nbof_eliminated = round(  numel(W.state) * (1-P.connection_density)   );
-    W.eliminated = randperm(numel(W.state), nbof_eliminated);
-    W.eliminated = sort([W.eliminated, diagonal]);
+        % Listing weights to delete
+        not_eliminated = find(dummy);
+        eliminated = 1:numel(W.state);
+        eliminated(not_eliminated) = [];
+        W.eliminated = eliminated;
+                  
 end
 
 W.state(W.eliminated) = 0;
-P.attempted_dilution = P.connections_per_neuron / P.nbof_neurons; % the exact connection density
 
 %% Store
 
