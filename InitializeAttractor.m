@@ -79,7 +79,7 @@ else
     diagonal = 1 : P.nbof_neurons+1 : P.nbof_neurons*P.nbof_neurons;
 end
 
-% Delete weights based on P.connections_per_neuron (tries to ensure an exact number of weights) as in Rolls, 2012
+% Delete weights 
 switch P.weight_deletion_mode
     
     case 'probabilistic'

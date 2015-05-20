@@ -2,6 +2,8 @@ function [G, S] = AttractorPop(S)
 
 %% Initialize population
 
+S.pop_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
+
 % Seed
 if strcmp(S.popseed, 'noseed')    
 else
