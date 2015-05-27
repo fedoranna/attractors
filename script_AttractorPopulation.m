@@ -5,20 +5,23 @@ mode = 'i'; % selection or individuals
 %% Parameters for selection
 
 if mode == 's'
-    repetitions = 3;
     beeps = 3;
+    folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\';
+    save2excel = 1;
+    save_matfile = 1;
     
-    S.popsize = 10;                    % number of attractor networks in the population
-    S.nbof_generations = 50;             % number of generations of attractor networks
+    repetitions = 1;
+    S.popsize = 50;                    % number of attractor networks in the population
+    S.nbof_generations = 30;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
-    S.selected_perc = 20;               % 0 to 100; the selected percentage of individuals for reproduction
-    S.nbof_global_testingpatterns = 5;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
+    S.selected_perc = 10;               % 0 to 100; the selected percentage of individuals for reproduction
+    S.nbof_global_testingpatterns = 2; % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 1;                   % 0 or 1; retraining in each generation with the selected outputs
-    S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
-    S.mutation_rate = 0;                % probability of mutation/bit during reproduction
+    S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
+    S.mutation_rate = 0;              % probability of mutation/bit during reproduction
     
     S.parametersets = zeros(1, S.popsize) + 1820122; % ID of the parameterset for the attractors
-    S.popseeds = [1 2 3];
+    S.popseeds = [1];
 end
 
 %% Parameters for testing individual networks
@@ -27,10 +30,11 @@ if mode == 'i'
     beeps = 3;
     folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\';
     save2excel = 1;
+    save_matfile = 1;
     
     S.popsize = 10;                    % should be 1 if trained_percentage=100
     S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
-    S.parametersets = zeros(1, S.popsize) + 1820123; % ID of the parameterset for the attractors
+    S.parametersets = zeros(1, S.popsize) + 182012; % ID of the parameterset for the attractors
     S.popseeds = [1];
     
     % Don't change these when testing individual networks!
@@ -45,6 +49,7 @@ end
 
 %% Run
 
+tic
 if numel(S.popseeds) < repetitions
     rng shuffle
     S.popseeds = randperm(10000,repetitions);
@@ -64,20 +69,33 @@ if mode == 'i'
         performance(i,1) = getfield(G{i}.T, 'correlation');
     end
     for i = 1:numel(G)
-        performance(i,2) = getfield(G{i}.T, 'avg_score_perc');
+        performance(i,2) = getfield(G{i}.T, 'avg_score');
     end
     for i = 1:numel(G)
-        performance(i,3) = getfield(G{i}.T, 'percof_correct');
+        performance(i,3) = getfield(G{i}.T, 'propof_correct');
     end
     avg_performance = mean(performance);
 end
 if mode == 's'
     avg_performance = NaN(1,3);
     avg_F = mean(F,1);
-    avg_performance(1) = avg_F(end);
+    if strcmp(S.fitness_measure, 'correlation')
+        avg_performance(1) = avg_F(end);
+    end
+    if strcmp(S.fitness_measure, 'avg_score')
+        avg_performance(2) = avg_F(end);
+    end
+    if strcmp(S.fitness_measure, 'propof_correct')
+        avg_performance(3) = avg_F(end);
+    end
 end
 
-%% Save to excel
+%% Save data
+
+S.runningtime_min = toc/60;
+if save_matfile == 1 % Save all variables in .mat file; later can be loaded
+    save([folder, S.pop_ID, '.mat'], '-v7.3');
+end
 
 if save2excel
     excelfile = [folder, 'RESULTS.xlsx'];
@@ -148,8 +166,8 @@ if mode=='s'
         plot(1:S.nbof_generations, F(r,:), 'LineWidth', 2)
     end
     xlabel('Generations')
-    ylabel([{'Average fitness of the population'};{'(proportion of correctly recalled output bits)'}])
-    set(gca, 'YLim', [0.5,1.0])
+    ylabel([{'Average fitness of the population'};{['(', S.fitness_measure,')']}])
+    set(gca, 'YLim', [-0.01,1.01])
     
     cim = ['Pop. ', S.pop_ID];
     title(cim)
@@ -160,30 +178,36 @@ end
 %% Plot for 'i' mode
 
 if mode=='i'
-    boxplot(S.fitness)
-    cim = ['Pop. ', S.pop_ID];
+    boxplot(performance, 'labels', {'Correlation'; 'Proportion of correct neurons'; 'Proportion of correct patterns'})
+    set(gca, 'YLim', [0,1])
+    cim = [S.pop_ID];
     title(cim)
-    set(gca, 'YLim', [0.5,1.0])
-    ylabel(S.fitness_measure)
     print('-dpng', ['C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\', cim, '.png'])
     close
 end
 
 %% Monitor
 
-mean(S.fitness)
+avg_performance
+%mean(S.fitness)
 %boxplot(S.fitness)
 %mutation_rate_pergeneration = 5*50*2*S.mutation_rate;
 
 %% Visualize weights
 
-% imagesc(G{1}.W.state)
-% colorbar
-% axis('square')
-% h = gca;
-% set(gca, 'XTick', 0.5:1:10.5)
-% set(gca, 'YTick', 0.5:1:10.5)
-% grid('on')
+if 1==0
+    %figure
+    colorbar
+    axis('square')
+    h = gca;
+    %set(gca, 'XTick', 0.5:1:10.5)
+    %set(gca, 'YTick', 0.5:1:10.5)
+    grid('on')
+    %for i = 1:10
+        imagesc(G{2,2}.W.state)
+        title(num2str(i))
+    %end
+end
 
 %% Beep
 
@@ -191,6 +215,7 @@ for i = 1:beeps
     beep
     pause(0.5)
 end
+toc
 
 
 
