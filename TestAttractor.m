@@ -6,7 +6,7 @@ if A.P.synchronous_update
     
     for p = 1 : size(A.D.testingset_I, 1)         % patterns
         
-        A.L.output = A.P.activation_function(A.D.testingset_I(p,:) * A.W.state, A.P.threshold, A.P.gain_factor);
+        A.L.output = A.D.testingset_I(p,:);
         for r = 1 : A.P.timeout
             previous_output = A.L.output;
             A.L.output = A.P.activation_function(previous_output * A.W.state, A.P.threshold, A.P.gain_factor);
@@ -76,6 +76,9 @@ end
 A.T.correctness = A.T.outputs == A.D.testingset_O;
 A.T.scores = mean(A.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern
 corr_matrix = corrcoef(A.T.outputs, A.D.testingset_O);
+if isnan(corr_matrix(1,2)) % if either the output or the input consists of straight 0s or 1s, corr = NaN
+    corr_matrix(1,2) = A.T.scores;
+end
 
 %%  Possible fitness measures
 

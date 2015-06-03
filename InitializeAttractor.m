@@ -29,7 +29,8 @@ D.testingset_O = D.testingset;
 D.testingset_I = D.testingset_O;
 
 % Make input noisy
-D.testingset_I = D.testingset_O + randn(size(D.testingset_O)) * P.noise;
+flippingmatrix = double(rand(size(D.testingset_I)) <= (P.noise/100));
+D.testingset_I = abs(flippingmatrix - D.testingset_I);
 
 % Make input incomplete
 nbof_deleted = round((P.missing_perc/100) * numel(D.testingset_O));

@@ -49,10 +49,12 @@ switch A.P.learning_rule
         A.W.state(A.W.eliminated) = 0;
     
     case 'covariance2' % same as covariance1 but mean activity is calculated per neuron, and not per network
-        a = mean(A.D.trainingset, 1); % this is a row vector
+        %a = mean(A.D.trainingset, 1); % this is a row vector
         %a = sparseness(A.D.trainingset);
+        a = mean(mean(A.D.trainingset, 1)); % this is one scalar        
         N = size(A.D.trainingset, 1);    
-        arep = repmat(a,N,1);                               
+        %arep = repmat(a,N,1);     
+        arep = repmat(a, (size(A.D.trainingset)));
         inc = (1./(N*(a'*a))) .* ((A.D.trainingset-arep)' * (A.D.trainingset-arep));
         
         % Problem 1: if there is a neuron which is never active, then then 

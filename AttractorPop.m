@@ -41,8 +41,8 @@ for i = 1:S.popsize
     end
     
     % Train and test the first generation
-    A = TrainAttractor(A);
-    A = TestAttractor(A);
+    A = TrainAttractor(A); % trainingset is the size of P.nbof_patterns
+    A = TestAttractor(A);  % testingset is the size of S.nbof_global_testingpatterns
     G{i, 1} = A;
 end
 ['Generation No. 1']
@@ -113,6 +113,11 @@ for g = 2:S.nbof_generations
         % Modify
         G{i, g}.D.testingset_I = selected_outputs{next}; 
         G{i, g}.D.trainingset = selected_outputs{next}; 
+        
+        % Forget
+        if S.forgetting_rate ~= 1
+            G{i, g}.W.state = G{i, g}.W.state * S.forgetting_rate;
+        end
         
         % Train and test
         if S.retraining
