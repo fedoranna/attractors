@@ -19,7 +19,7 @@ if mode == 's'
     S.retraining = 0;                   % 0 or 1; retraining in each generation with the selected outputs
     S.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
     S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
-    S.mutation_rate = 0;              % probability of mutation/bit during reproduction
+    S.mutation_rate = 0.01;              % probability of mutation/bit during reproduction
     
     S.parametersets = zeros(1, S.popsize) + 1820122; % ID of the parameterset for the attractors
     S.popseeds = [1:5];
