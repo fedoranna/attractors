@@ -10,9 +10,9 @@ if mode == 's'
     save2excel = 1;
     save_matfile = 1;
     
-    repetitions = 1;
-    S.popsize = 2;                    % number of attractor networks in the population
-    S.nbof_generations = 2;             % number of generations of attractor networks
+    repetitions = 5;
+    S.popsize = 5;                    % number of attractor networks in the population
+    S.nbof_generations = 3;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
     S.selected_perc = 20;               % 0 to 100; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 1; % the number of global testing patterns; if 0 then each individual is tested on its own testing set
@@ -37,9 +37,9 @@ if mode == 'i'
     S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
     S.parametersets = zeros(1, S.popsize) + 1820123; % ID of the parameterset for the attractors
     S.popseeds = [1];
-    S.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
     
     % Don't change these when testing individual networks!
+    S.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
     repetitions = 1;                   % should be 1
     S.nbof_generations = 1;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'

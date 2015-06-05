@@ -83,7 +83,7 @@ switch v
         P.learning_rule = 'covariance2';    % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2' (see TrainAttractor)
         P.learning_rate = 1;              %%% learning rate
         P.forgetting_rate = 1;            %%% weights are multiplied by this number before each trainig session
-        P.autothreshold_aftertraining = 0;  % 0/1; enables automatic threshold after training
+        P.autothreshold_aftertraining = 1;  % 0/1; enables automatic threshold after training
         P.sparseness_difference = 0.001;    % maximum allowable difference between input and output sparseness wehn setting threshold
         P.threshold_incr = 0.8;             % the increment with which to change the threshold during threshold setting
         P.threshold_setting_timeout = 500;  % maximum number of steps when setting the threshold
@@ -94,7 +94,7 @@ switch v
         P.tolerance = 0;                    % if>0 then binarizes output; tolerance for the difference between output and active/inactive values
         P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
         P.field_ratio = 0.3;                % s, the strength of the external field
-        P.autothreshold_duringtesting = 1;  % 0/1; automatically set thresholds separately for each neuron after each recurrent cycle during testing
+        P.autothreshold_duringtesting = 0;  % 0/1; automatically set thresholds separately for each neuron after each recurrent cycle during testing
         P.noise = 0;                        % the percentage of flipped input bits during testing
         P.missing_perc = 0;                 % the percentage of missing input bits during testing
         %%      
@@ -119,7 +119,7 @@ switch v
         
         % Input
         P.lengthof_patterns = P.nbof_neurons;   % the length of patterns; = P.nbof_neurons
-        P.nbof_patterns = 4;               %%% number of patterns in the testing set
+        P.nbof_patterns = 1;               %%% number of patterns in the testing set
         P.sparseness = 0.1;                 %%% proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
         
@@ -128,7 +128,7 @@ switch v
         P.learning_rule = 'covariance2';    % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2' (see TrainAttractor)
         P.learning_rate = 1;              %%% learning rate
         P.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
-        P.autothreshold_aftertraining = 0;  % 0/1; enables automatic threshold after training
+        P.autothreshold_aftertraining = 1;  % 0/1; enables automatic threshold after training
         P.sparseness_difference = 0.001;    %%% maximum allowable difference between input and output sparseness wehn setting threshold
         P.threshold_incr = 0.8;             %%% the increment with which to change the threshold during threshold setting
         P.threshold_setting_timeout = 500; %%% maximum number of steps when setting the threshold
@@ -139,7 +139,7 @@ switch v
         P.tolerance = 0;                    % if>0 then binarizes output; tolerance for the difference between output and active/inactive values
         P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
         P.field_ratio = 0.3;                %%% s, the strength of the external field
-        P.autothreshold_duringtesting = 1;  % 0/1; automatically set thresholds separately for each neuron after each recurrent cycle during testing
+        P.autothreshold_duringtesting = 0;  % 0/1; automatically set thresholds separately for each neuron after each recurrent cycle during testing
         P.noise = 10;                        % the percentage of flipped input bits during testing
         P.missing_perc = 0;                 % the percentage of missing input bits during testing
         

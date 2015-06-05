@@ -3,8 +3,9 @@
 function A = set_threshold_duringtesting(A, neuron)
 
 output = A.P.activation_function(A.L.local_field, A.L.thresholds(neuron), A.P.gain_factor); % column_vector
+
 sparseness_output = sparseness(output);
-sparseness_input = A.P.sparseness_input;
+sparseness_input = sparseness(A.D.testingset_I);
 
 incr_steps = 0;
 previous_inc = 0;

@@ -37,7 +37,7 @@ nbof_deleted = round((P.missing_perc/100) * numel(D.testingset_O));
 deleted = randperm(numel(D.testingset_O), nbof_deleted);
 D.testingset_I(deleted) = 0;
 
-P.sparseness_input = sparseness(D.testingset);
+P.sparseness_input = sparseness(D.testingset); % this is the actual (realized) sparseness
 
 %% Choose trainingset
 
@@ -142,7 +142,10 @@ switch P.weight_deletion_mode
                   
 end
 
-W.state(W.eliminated) = 0;
+W.masking_matrix = ones(size(W.state));
+W.masking_matrix(W.eliminated) = 0;
+
+W.state = W.state .* W.masking_matrix;
 
 %% Store
 
