@@ -16,10 +16,10 @@ if mode == 's'
     S.selection_type = 'truncation';    % 'truncation'
     S.selected_perc = 20;               % 0 to 100; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 1; % the number of global testing patterns; if 0 then each individual is tested on its own testing set
-    S.retraining = 0;                   % 0 or 1; retraining in each generation with the selected outputs
+    S.retraining = 0;                   % 0 to 1; probabilistic retraining in each generation with the selected outputs
     S.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
     S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
-    S.mutation_rate = 0.01;              % probability of mutation/bit during reproduction
+    S.mutation_rate = 0;              % probability of mutation/bit during reproduction
     
     S.parametersets = zeros(1, S.popsize) + 1820122; % ID of the parameterset for the attractors
     S.popseeds = [1:5];
@@ -45,7 +45,7 @@ if mode == 'i'
     S.selection_type = 'truncation';    % 'truncation'
     S.selected_perc = 0;               % 0 to 100; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 0;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
-    S.retraining = 0;                   % 0 or 1; retraining in each generation with the selected outputs
+    S.retraining = 0;                   % 0 to 1; probabilistic retraining in each generation with the selected outputs
     S.mutation_rate = 0;                % probability of mutation/bit during reproduction
 end
 

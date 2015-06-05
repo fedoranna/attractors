@@ -119,7 +119,7 @@ for g = 2:S.nbof_generations
         end
         
         % Train and test
-        if S.retraining
+        if rand < S.retraining
             G{i, g} = TrainAttractor(G{i, g});
         end
         G{i, g} = TestAttractor(G{i, g});
