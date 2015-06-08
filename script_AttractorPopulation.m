@@ -1,7 +1,7 @@
 clear all
 addpath(genpath('C:\Matlab_functions\Attractor\'));
 
-mode = 's'; % selection or individuals
+mode = 'i'; % selection or individuals
 %% Parameters for selection
 
 if mode == 's'

@@ -65,8 +65,8 @@ switch v
         
         % Architecture
         P.nbof_neurons = 25;               % number of neurons: 1000
-        P.weight_deletion_mode = 'probabilistic';   % 'exact' or 'probabilistic'
-        P.connection_density = 0.4;         % [0,1]; the proportion of existing weights to all possible weights
+        P.weight_deletion_mode = 'poisson';   % 'exact', 'probabilistic', 'poisson'
+        P.connection_density = 0.4;         % [0,1]; the proportion of existing weights to all possible weights; the mean number of weight per neuron
         P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.gain_factor = 0.5;                % slope of the threshold linear activation function
         P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; starting value when autoupdate enabled
@@ -110,7 +110,7 @@ switch v
         
         % Architecture
         P.nbof_neurons = 100;              % number of neurons: 1000
-        P.weight_deletion_mode = 'probabilistic';   % 'exact' or 'probabilistic'
+        P.weight_deletion_mode = 'probabilistic';   % 'exact', 'probabilistic', 'poisson'
         P.connection_density = 0.4;         %%% [0,1]; the proportion of existing weights to all possible weights
         P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.gain_factor = 0.5;                % slope of the threshold linear activation function

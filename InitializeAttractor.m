@@ -89,6 +89,9 @@ switch P.weight_deletion_mode
         W.eliminated = randperm(numel(W.state), nbof_eliminated);
         W.eliminated = sort([W.eliminated, diagonal]);
         
+        W.masking_matrix = ones(size(W.state));
+        W.masking_matrix(W.eliminated) = 0;
+        
     case 'exact'        
         
         P.connections_per_neuron = P.connection_density * P.nbof_neurons;
@@ -139,11 +142,16 @@ switch P.weight_deletion_mode
         eliminated = 1:numel(W.state);
         eliminated(not_eliminated) = [];
         W.eliminated = eliminated;
+        
+        W.masking_matrix = ones(size(W.state));
+        W.masking_matrix(W.eliminated) = 0;
+        
+    case 'poisson'
+        W.masking_matrix = poissrnd(P.connection_density, size(W.state)); % This function is in the Statistics Toolbox
                   
 end
 
-W.masking_matrix = ones(size(W.state));
-W.masking_matrix(W.eliminated) = 0;
+
 
 W.state = W.state .* W.masking_matrix;
 
