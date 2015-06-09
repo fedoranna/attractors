@@ -11,7 +11,7 @@ if mode == 's'
     save_matfile = 1;
     
     repetitions = 5;
-    S.popsize = 5;                    % number of attractor networks in the population
+    S.popsize = 10;                    % number of attractor networks in the population
     S.nbof_generations = 3;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
     S.selected_perc = 20;               % 0 to 100; the selected percentage of individuals for reproduction
@@ -54,7 +54,7 @@ end
 tic
 if numel(S.popseeds) < repetitions
     rng shuffle
-    S.popseeds = randperm(10000,repetitions);
+    S.popseeds = randperm(repetitions*1000,repetitions);
 end
 
 for r = 1:repetitions
@@ -202,11 +202,11 @@ end
 %% Monitor
 
 avg_performance
-%mean(S.fitness)
-%boxplot(S.fitness)
-%mutation_rate_pergeneration = 5*50*2*S.mutation_rate;
-S.pop_ID;
-sum(G{1}.T.outputs);
+% mean(S.fitness)
+% %boxplot(S.fitness)
+% %mutation_rate_pergeneration = 5*50*2*S.mutation_rate;
+% S.pop_ID;
+% sum(G{1}.T.outputs);
 
 %% Visualize weights
 

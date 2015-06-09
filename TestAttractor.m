@@ -9,7 +9,7 @@ if A.P.synchronous_update
         A.L.output = A.D.testingset_I(p,:);
         for r = 1 : A.P.timeout
             previous_output = A.L.output;
-            A.L.output = A.P.activation_function(previous_output * A.W.state, A.P.threshold, A.P.gain_factor);
+            A.L.output = A.P.activation_function(previous_output * A.W.state, A.L.thresholds, A.P.gain_factor);
             diff = abs(A.L.output - previous_output);
             if sum(diff) <= A.P.convergence_threshold
                 break

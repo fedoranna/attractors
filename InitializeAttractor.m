@@ -58,7 +58,7 @@ D.trainingset = sortrows(D.trainingset);
 %% Layer of neurons
 
 L.output = zeros(1, P.nbof_neurons);
-L.thresholds = repmat(P.threshold, 1, size(L.output,2)); % row vector for all neurons for asynchoronous update and individual thresholds
+L.thresholds = repmat(P.threshold, 1, size(L.output, 2)); % row vector for all neurons for asynchoronous update and individual thresholds
 
 %% Weights
 

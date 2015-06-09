@@ -23,7 +23,7 @@ switch v
         P.connection_density = 0.4;         % [0,1]; the proportion of existing weights to all possible weights
         P.activation_function = @transferfn_threshold_linear;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.gain_factor = 0.5;                % slope of the threshold linear activation function
-        P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; starting value when autoupdate enabled
+        P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; the middle of the linear part for @transferfn_piecewise_linear; starting value when autoupdate enabled
         P.allow_selfloops = 0;              % 0/1; whether to allow self-loops
         
         % Input
@@ -69,7 +69,7 @@ switch v
         P.connection_density = 0.4;         % [0,1]; the proportion of existing weights to all possible weights; the mean number of weight per neuron
         P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.gain_factor = 0.5;                % slope of the threshold linear activation function
-        P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; starting value when autoupdate enabled
+        P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; the middle of the linear part for @transferfn_piecewise_linear; starting value when autoupdate enabled
         P.allow_selfloops = 0;              % 0/1; whether to allow self-loops
         
         % Input
@@ -98,6 +98,7 @@ switch v
         P.noise = 0;                        % the percentage of flipped input bits during testing
         P.missing_perc = 0;                 % the percentage of missing input bits during testing
         %%      
+        
     case 1820123 % based on Rolls, but optimized for performance
         % Random seeds                      % 'noseed' or a number bw 0 and 2^31-2;
         P.inputseed = 'noseed';             % random seed for pattern generation
@@ -114,7 +115,7 @@ switch v
         P.connection_density = 0.4;         %%% [0,1]; the proportion of existing weights to all possible weights
         P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.gain_factor = 0.5;                % slope of the threshold linear activation function
-        P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; starting value when autoupdate enabled
+        P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; the middle of the linear part for @transferfn_piecewise_linear; starting value when autoupdate enabled
         P.allow_selfloops = 0;              % 0/1; whether to allow self-loops
         
         % Input

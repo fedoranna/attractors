@@ -5,17 +5,14 @@ function [G, S] = AttractorPop(S)
 S.pop_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 
 % Seed
-if strcmp(S.popseed, 'noseed')
-else
-    rng(S.popseed, 'twister');
-    seeds = randperm(S.popsize*30000, S.popsize*3);
-end
+rng(S.popseed, 'twister');
+seeds = randperm(S.popsize*30000, S.popsize*3);
 
 % Set global problem (this will be the pattern against which each output is evaluated)
 P = getParameters(S.parametersets(1));
 if S.nbof_global_testingpatterns > 0
-    global_problem = double(rand(S.nbof_global_testingpatterns, P.lengthof_patterns) <= P.sparseness);
-    S.global_problem = global_problem;
+    S.global_problem = double(rand(S.nbof_global_testingpatterns, P.lengthof_patterns) <= P.sparseness);
+else S.global_problem = NaN;
 end
 
 % First generation
@@ -24,20 +21,18 @@ for i = 1:S.popsize
     P = getParameters(S.parametersets(i));
     
     % Seeds
-    if strcmp(S.popseed, 'noseed')
-    else
-        P.inputseed = seeds(i);
-        P.weightseed = seeds(i*2);
-        P.trainingseed = seeds(i*3);
-    end
+    P.inputseed = seeds(i);
+    P.weightseed = seeds(i + S.popsize);
+    P.trainingseed = seeds(i + S.popsize*2);
     
     % Initialize population
     A = InitializeAttractor(P);
     
     % Set global testing pattern
     if S.nbof_global_testingpatterns > 0
-        A.D.testingset_O = global_problem;
+        A.D.testingset_O = S.global_problem;
         A.D.testingset_I = A.D.testingset_I(1:S.nbof_global_testingpatterns, :); % first generation gets random inputs for testing
+        
     end
     
     % Train and test the first generation
