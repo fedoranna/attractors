@@ -67,3 +67,5 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
     
 end
 
+
+
