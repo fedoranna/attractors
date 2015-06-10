@@ -37,10 +37,14 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
     end
     
     if inc == -previous_inc
+        if abs(sparseness_input - previous_sparseness) < abs(sparseness_input - sparseness_output)
+            A.L.thresholds = A.L.thresholds + inc;
+        end
         break
     else
         A.L.thresholds = A.L.thresholds + inc;
         previous_inc = inc;
+        previous_sparseness = sparseness_output;
     end
     
     % Recalculate outputs

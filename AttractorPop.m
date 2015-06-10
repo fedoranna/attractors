@@ -2,6 +2,7 @@ function [G, S] = AttractorPop(S)
 
 %% Initialize population
 
+S.end_of_initializing_parameters = '--------';
 S.pop_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 
 % Seed
@@ -31,8 +32,8 @@ for i = 1:S.popsize
     % Set global testing pattern
     if S.nbof_global_testingpatterns > 0
         A.D.testingset_O = S.global_problem;
-        A.D.testingset_I = A.D.testingset_I(1:S.nbof_global_testingpatterns, :); % first generation gets random inputs for testing
-        
+        %A.D.testingset_I = A.D.trainingset(1:S.nbof_global_testingpatterns, :); % first generation gets input from their training patterns
+        A.D.testingset_I = double(rand(S.nbof_global_testingpatterns, P.lengthof_patterns) <= P.sparseness); % first generation gets random inputs
     end
     
     % Train and test the first generation
@@ -49,7 +50,7 @@ fitness = NaN(S.popsize, S.nbof_generations);
 
 for g = 2:S.nbof_generations
     
-    % Mutation before selection               DO NOT DELETE
+    % Mutation before selection
     if S.mutation_rate > 0
         for i = 1:S.popsize
             mutationmatrix = double(rand(size(G{i, g-1}.T.outputs)) <= S.mutation_rate);
@@ -57,7 +58,7 @@ for g = 2:S.nbof_generations
             
             G{i, g-1}.T.correctness = G{i, g-1}.T.outputs == G{i, g-1}.D.testingset_O;
             corr_matrix = corrcoef(G{i, g-1}.T.outputs, G{i, g-1}.D.testingset_O);
-            G{i, g-1}.T.correlation = corr_matrix(1,2);
+            G{i, g-1}.T.correlation = corr_matrix(1,2);                 % -1 to +1; correlation
             G{i, g-1}.T.scores = mean(G{i, g-1}.T.correctness, 2);      % 0 to 1; proportion of correct neurons for each testing pattern
             G{i, g-1}.T.avg_score = mean(G{i, g-1}.T.scores);           % 0 to 1; avg score on all testing patterns
             G{i, g-1}.T.avg_score_perc = mean(G{i, g-1}.T.scores)*100;  % 0 to 100; avg score percentage on all testing patterns

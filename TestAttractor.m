@@ -6,36 +6,34 @@ if A.P.synchronous_update
     
     for p = 1 : size(A.D.testingset_I, 1)         % patterns
         
-        A.L.output = A.D.testingset_I(p,:);
+        A.L.state = A.D.testingset_I(p,:);
         for r = 1 : A.P.timeout
-            previous_output = A.L.output;
-            A.L.output = A.P.activation_function(previous_output * A.W.state, A.L.thresholds, A.P.gain_factor);
-            diff = abs(A.L.output - previous_output);
+            previous_output = A.L.state;
+            A.L.state = A.P.activation_function(previous_output * A.W.state, A.L.thresholds, A.P.gain_factor);
+            diff = abs(A.L.state - previous_output);
             if sum(diff) <= A.P.convergence_threshold
                 break
             end
-            if A.P.autothreshold_duringtesting
-                A = set_threshold_duringtesting(A, neuron);
-            end
+%             if A.P.autothreshold_duringtesting
+%                 A = set_threshold_duringtesting(A, neuron);
+%             end
         end
-        A.T.outputs(p,:) = A.L.output;
+        A.T.outputs(p,:) = A.L.state;
         
     end
     
 else % asynchronous update
     
-    %a = A.P.sparseness_input;
-    a = sparseness(A.D.testingset_I);
     order = randperm(A.P.nbof_neurons, A.P.nbof_neurons);
-    A.L.outputs = A.D.testingset_I; % all patterns, all neurons
+    A.L.state = A.D.testingset_I; % all patterns, all neurons
     
     for n = 1:numel(order)
         neuron = order(n); % the neuron to be updated
         
         for r = 1 : A.P.timeout
-            previous_output = A.L.outputs(:, neuron);
+            previous_output = A.L.state(:, neuron);
             
-            internal_field = A.L.outputs * A.W.state(:, neuron); % column vector for the internal activation of 1 neuron to all patterns
+            internal_field = A.L.state * A.W.state(:, neuron); % column vector for the internal activation of 1 neuron to all patterns
             s = A.P.field_ratio;
             %           s = (A.P.field_ratio * internal_field) ./ A.D.testingset_I(:,neuron); % column vector
             %             % There could be NaNs if 0/0, (or Inf if x/0, but it seems it does not work without Infs)
@@ -44,7 +42,7 @@ else % asynchronous update
             %                     s(i) = 0;
             %                 end
             %             end
-            external_field = A.D.testingset_I(:,neuron) .* (s/a);
+            external_field = A.D.testingset_I(:,neuron) .* (s/sparseness(A.D.testingset_I));
             A.L.local_field = internal_field + external_field; % column vector for the current neuron and each pattern
             
             if A.P.autothreshold_duringtesting
@@ -52,9 +50,9 @@ else % asynchronous update
             end
             
             activation = A.P.activation_function(A.L.local_field, A.L.thresholds(neuron), A.P.gain_factor); % column_vector
-            A.L.outputs(:,neuron) = activation;
+            A.L.state(:,neuron) = activation;
             
-            diff = abs(A.L.outputs(:, neuron) - previous_output);
+            diff = abs(A.L.state(:, neuron) - previous_output);
             if sum(diff) <= A.P.convergence_threshold
                 break
             end
@@ -63,7 +61,7 @@ else % asynchronous update
 %             A = set_threshold_duringtesting(A, neuron);
 %         end
     end
-    A.T.outputs = A.L.outputs;
+    A.T.outputs = A.L.state;
     
 end
 

@@ -1,12 +1,12 @@
 function A = TrainAttractor(A, varargin)
 
-ip = inputParser;
-defaultWeightVisualizer = @NOP;
-addRequired(ip, 'A');
-addOptional(ip, 'weightVisualizer', defaultWeightVisualizer);
-parse(ip, A, varargin{:});
-A = ip.Results.A; 
-weightVisualizer = ip.Results.weightVisualizer;
+% ip = inputParser;
+% defaultWeightVisualizer = @NOP;
+% addRequired(ip, 'A');
+% addOptional(ip, 'weightVisualizer', defaultWeightVisualizer);
+% parse(ip, A, varargin{:});
+% A = ip.Results.A; 
+% weightVisualizer = ip.Results.weightVisualizer;
 
 %%
 switch A.P.learning_rule

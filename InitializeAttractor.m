@@ -1,5 +1,6 @@
 function A = InitializeAttractor(P)
 
+P.end_of_initializing_parameters = '--------';
 P.ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 
 %% Generate input pattern and testingset
@@ -18,21 +19,24 @@ if P.inactive_input == 0
     D.testingset = double(rand(P.nbof_patterns, P.lengthof_patterns) <= P.sparseness);
 end
 
-% If input consists of -1 and +1; unique, but the number of patterns might be less than specified in the parameters
+% If input consists of -1 and +1; might not be unique!
 if P.inactive_input == -1
     D.testingset = 2*floor(2*rand(P.nbof_patterns, P.nbof_neurons))-1; % Create random binary patterns of -1 and +1; each input pattern is a row in the matrix
-    D.testingset = unique(D.testingset, 'rows');
-    P.nbof_patterns = size(D.testingset, 1);
 end
 
+% Make testingset unique
+% D.testingset = unique(D.testingset, 'rows');
+% P.nbof_patterns = size(D.testingset, 1);
+
+% Complete input
 D.testingset_O = D.testingset;
 D.testingset_I = D.testingset_O;
 
-% Make input noisy
+% Noisy input
 flippingmatrix = double(rand(size(D.testingset_I)) <= (P.noise/100));
 D.testingset_I = abs(flippingmatrix - D.testingset_I);
 
-% Make input incomplete
+% Incomplete input
 nbof_deleted = round((P.missing_perc/100) * numel(D.testingset_O));
 deleted = randperm(numel(D.testingset_O), nbof_deleted);
 D.testingset_I(deleted) = 0;
@@ -50,15 +54,17 @@ else
     rng(P.trainingseed, 'twister');
 end
 
-k = round(P.nbof_patterns * P.trained_percentage/100);
-D.selected_patterns = randperm(P.nbof_patterns, k);
-D.trainingset = D.testingset(D.selected_patterns,:);
-D.trainingset = sortrows(D.trainingset);
+k = round(P.nbof_patterns * P.trained_percentage/100); % number of training patterns
+if k < P.nbof_patterns
+    D.selected_patterns = randperm(P.nbof_patterns, k);
+    D.trainingset = D.testingset(D.selected_patterns,:);
+else 
+    D.trainingset = D.testingset;
+end
 
 %% Layer of neurons
 
-L.output = zeros(1, P.nbof_neurons);
-L.thresholds = repmat(P.threshold, 1, size(L.output, 2)); % row vector for all neurons for asynchoronous update and individual thresholds
+L.thresholds = repmat(P.threshold, 1, P.nbof_neurons); % row vector for all neurons for asynchoronous update and individual thresholds
 
 %% Weights
 
@@ -146,7 +152,7 @@ switch P.weight_deletion_mode
         W.masking_matrix = ones(size(W.state));
         W.masking_matrix(W.eliminated) = 0;
         
-    case 'poisson'
+    case 'Poisson'
         W.masking_matrix = poissrnd(P.connection_density, size(W.state)); % This function is in the Statistics Toolbox
                   
 end

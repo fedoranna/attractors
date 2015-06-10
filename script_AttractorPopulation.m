@@ -1,4 +1,4 @@
-clear all
+%clear all
 addpath(genpath('C:\Matlab_functions\Attractor\'));
 
 mode = 'i'; % selection or individuals

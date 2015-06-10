@@ -65,7 +65,7 @@ switch v
         
         % Architecture
         P.nbof_neurons = 25;               % number of neurons: 1000
-        P.weight_deletion_mode = 'poisson';   % 'exact', 'probabilistic', 'poisson'
+        P.weight_deletion_mode = 'Poisson';   % 'exact', 'probabilistic', 'poisson'
         P.connection_density = 0.4;         % [0,1]; the proportion of existing weights to all possible weights; the mean number of weight per neuron
         P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
         P.gain_factor = 0.5;                % slope of the threshold linear activation function
@@ -100,6 +100,7 @@ switch v
         %%      
         
     case 1820123 % based on Rolls, but optimized for performance
+        %%
         % Random seeds                      % 'noseed' or a number bw 0 and 2^31-2;
         P.inputseed = 'noseed';             % random seed for pattern generation
         P.weightseed = 'noseed';            % random seed for generating initial weights
@@ -143,7 +144,7 @@ switch v
         P.autothreshold_duringtesting = 0;  % 0/1; automatically set thresholds separately for each neuron after each recurrent cycle during testing
         P.noise = 10;                        % the percentage of flipped input bits during testing
         P.missing_perc = 0;                 % the percentage of missing input bits during testing
-        
+        %%
     otherwise
         'Error: Parameter set was not found!'
 end
