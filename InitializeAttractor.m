@@ -3,6 +3,17 @@ function A = InitializeAttractor(P)
 P.end_of_initializing_parameters = '--------';
 P.ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 
+%% Delete unnecessary parameters
+
+if strcmp(func2str(P.activation_function), 'transferfn_piecewise_linear') || strcmp(func2str(P.activation_function), 'transferfn_step')
+    P.gain_factor = NaN;
+end
+if strcmp(func2str(P.threshold_algorithm), 'set_threshold_aftertraining_det')
+    P.sparseness_difference = NaN; 
+    P.threshold_incr = NaN;
+    P.threshold_setting_timeout = NaN;
+end
+
 %% Generate input pattern and testingset
 
 if strcmp(P.inputseed, 'noseed')
@@ -58,7 +69,7 @@ k = round(P.nbof_patterns * P.trained_percentage/100); % number of training patt
 if k < P.nbof_patterns
     D.selected_patterns = randperm(P.nbof_patterns, k);
     D.trainingset = D.testingset(D.selected_patterns,:);
-else 
+else
     D.trainingset = D.testingset;
 end
 
@@ -86,7 +97,7 @@ else
     diagonal = 1 : P.nbof_neurons+1 : P.nbof_neurons*P.nbof_neurons;
 end
 
-% Delete weights 
+% Delete weights
 switch P.weight_deletion_mode
     
     case 'probabilistic'
@@ -98,7 +109,7 @@ switch P.weight_deletion_mode
         W.masking_matrix = ones(size(W.state));
         W.masking_matrix(W.eliminated) = 0;
         
-    case 'exact'        
+    case 'exact'
         
         P.connections_per_neuron = P.connection_density * P.nbof_neurons;
         P.loading = P.nbof_patterns/P.connections_per_neuron;
@@ -154,7 +165,7 @@ switch P.weight_deletion_mode
         
     case 'Poisson'
         W.masking_matrix = poissrnd(P.connection_density, size(W.state)); % This function is in the Statistics Toolbox
-                  
+        
 end
 
 

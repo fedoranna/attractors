@@ -1,5 +1,5 @@
 % Step function with an output=0 or 1
-% weightedsum and threshold can be a number or an array of numbers 
+% weightedsum and threshold have to be the same size
 
 function activation = transferfn_step(weightedsum, threshold, dummy)
 

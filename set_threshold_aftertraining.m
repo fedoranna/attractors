@@ -17,7 +17,7 @@ for p = 1 : size(A.D.testingset_I, 1)         % synchronous update per patterns
 end
 
 sparseness_output = sparseness(outputs);
-sparseness_input = sparseness(A.D.testingset_I);
+sparseness_input = sparseness(A.D.trainingset);
 
 incr_steps = 0;
 previous_inc=0;
@@ -35,14 +35,15 @@ while abs(sparseness_input - sparseness_output) > A.P.sparseness_difference
     else
         inc = + A.P.threshold_incr;
     end
+    A.L.thresholds = A.L.thresholds + inc;
     
+    % Prevent oscillations
     if inc == -previous_inc
         if abs(sparseness_input - previous_sparseness) < abs(sparseness_input - sparseness_output)
-            A.L.thresholds = A.L.thresholds + inc;
+            A.L.thresholds = A.L.thresholds + previous_inc;
         end
         break
-    else
-        A.L.thresholds = A.L.thresholds + inc;
+    else        
         previous_inc = inc;
         previous_sparseness = sparseness_output;
     end

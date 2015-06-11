@@ -110,10 +110,8 @@ for g = 2:S.nbof_generations
         G{i, g}.D.trainingset = selected_outputs{next};
         
         % Forget
-        if S.forgetting_rate ~= 1
-            G{i, g}.W.state = G{i, g}.W.state * S.forgetting_rate;
-        end
-        
+        G{i, g}.W.state = G{i, g}.W.state * S.forgetting_rate;
+                
         % Train and test
         if rand < S.retraining
             G{i, g} = TrainAttractor(G{i, g});

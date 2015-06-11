@@ -1,6 +1,6 @@
 function A = TestAttractor(A)
 
-A.T.outputs = NaN(size(A.D.testingset_I, 1), A.P.nbof_neurons);
+A.T.outputs = NaN(size(A.D.testingset_I));
 
 if A.P.synchronous_update
     
@@ -49,7 +49,7 @@ else % asynchronous update
                 A = set_threshold_duringtesting(A, neuron);
             end
             
-            activation = A.P.activation_function(A.L.local_field, A.L.thresholds(neuron), A.P.gain_factor); % column_vector
+            activation = A.P.activation_function(A.L.local_field, repmat(A.L.thresholds(neuron), size(A.L.local_field)), A.P.gain_factor); % column_vector
             A.L.state(:,neuron) = activation;
             
             diff = abs(A.L.state(:, neuron) - previous_output);
@@ -74,7 +74,7 @@ A.T.correctness = A.T.outputs == A.D.testingset_O;
 A.T.scores = mean(A.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern; same as 1 - normalized Hamming distance
 corr_matrix = corrcoef(A.T.outputs, A.D.testingset_O);
 if isnan(corr_matrix(1,2)) % if either the output or the input consists of straight 0s or 1s, corr = NaN
-    corr_matrix(1,2) = A.T.scores;
+    corr_matrix(1,2) = mean(A.T.scores);
 end
 
 %%  Possible fitness measures

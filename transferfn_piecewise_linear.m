@@ -1,5 +1,6 @@
 % the threshold is the middle of the linear part
 % the length of the linear part is always 1
+% weightedsum and threshold have to be the same size
 
 function activation = transferfn_piecewise_linear(weightedsum, threshold, dummy)
 

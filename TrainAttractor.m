@@ -81,7 +81,7 @@ switch A.P.learning_rule
 end
 
 if A.P.autothreshold_aftertraining
-    A = set_threshold_aftertraining(A);
+    A = A.P.threshold_algorithm(A);
 end
 
 

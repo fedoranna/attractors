@@ -1,14 +1,15 @@
-%clear all
+clear all
 addpath(genpath('C:\Matlab_functions\Attractor\'));
 
-mode = 'i'; % selection or individuals
+S.mode = 's'; % selection or individuals
 %% Parameters for selection
 
-if mode == 's'
+if S.mode == 's'
     beeps = 3;
-    folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\';
+    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\';
     save2excel = 1;
     save_matfile = 1;
+    save_plot = 1;
     
     repetitions = 5;
     S.popsize = 10;                    % number of attractor networks in the population
@@ -27,11 +28,12 @@ end
 
 %% Parameters for testing individual networks
 
-if mode == 'i'
+if S.mode == 'i'
     beeps = 3;
-    folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\';
+    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\';
     save2excel = 1;
     save_matfile = 1;
+    save_plot = 0;
     
     S.popsize = 1;                    % should be 1 if trained_percentage=100
     S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
@@ -65,7 +67,7 @@ end
 
 %% Change fitness measure
 
-if mode == 'i'
+if S.mode == 'i'
     performance = NaN(size(G,1), 3);
     for i = 1:numel(G)
         performance(i,1) = getfield(G{i}.T, 'correlation');
@@ -76,19 +78,19 @@ if mode == 'i'
     for i = 1:numel(G)
         performance(i,3) = getfield(G{i}.T, 'propof_correct');
     end
-    avg_performance = mean(performance,1);
+    S.avg_performance = mean(performance,1);
 end
-if mode == 's'
-    avg_performance = NaN(1,3);
+if S.mode == 's'
+    S.avg_performance = NaN(1,3);
     avg_F = mean(F,1);
     if strcmp(S.fitness_measure, 'correlation')
-        avg_performance(1) = avg_F(end);
+        S.avg_performance(1) = avg_F(end);
     end
     if strcmp(S.fitness_measure, 'avg_score')
-        avg_performance(2) = avg_F(end);
+        S.avg_performance(2) = avg_F(end);
     end
     if strcmp(S.fitness_measure, 'propof_correct')
-        avg_performance(3) = avg_F(end);
+        S.avg_performance(3) = avg_F(end);
     end
 end
 
@@ -96,19 +98,19 @@ end
 
 S.runningtime_min = toc/60;
 if save_matfile == 1 % Save all variables in .mat file; later can be loaded
-    save([folder, S.pop_ID, '.mat'], '-v7.3');
+    save([S.folder, S.pop_ID, '.mat'], 'S', 'G', 'F', '-v7.3');
 end
 
 if save2excel
-    excelfile = [folder, 'RESULTS.xlsx'];
+    excelfile = [S.folder, 'RESULTS.xlsx'];
     where = size(xlsread(excelfile),1)+1;
     P = getParameters(S.parametersets(1));
     tosave = {
         S.pop_ID,
-        avg_performance(1),
-        avg_performance(2),
-        avg_performance(3),       
-        mode,
+        S.avg_performance(1),
+        S.avg_performance(2),
+        S.avg_performance(3),       
+        S.mode,
         S.popsize,
         S.fitness_measure,
         S.parametersets,
@@ -120,6 +122,7 @@ if save2excel
         S.nbof_global_testingpatterns,
         S.retraining,
         S.mutation_rate,
+        S.runningtime_min;
         P.inputseed,
         P.weightseed,
         P.trainingseed,
@@ -141,6 +144,7 @@ if save2excel
         P.learning_rate,
         P.forgetting_rate,
         P.autothreshold_aftertraining,
+        func2str(P.threshold_algorithm),
         P.sparseness_difference,
         P.threshold_incr,
         P.threshold_setting_timeout,
@@ -161,7 +165,7 @@ end
 
 %% Plot for 's' mode
 
-if mode=='s'
+if S.mode=='s' && save_plot == 1
     figure
     hold all
     for r = 1:repetitions
@@ -173,19 +177,19 @@ if mode=='s'
     
     cim = S.pop_ID;
     title(cim)
-    print('-dpng', [folder, cim, '.png'])
+    print('-dpng', [S.folder, cim, '.png'])
     close
 end
 
 %% Plot for 'i' mode
 
-if mode=='i'
+if S.mode=='i' && save_plot == 1
     if size(performance,1)>1
         boxplot(performance, 'labels', {'Correlation'; 'Proportion of correct neurons'; 'Proportion of correct patterns'})
         set(gca, 'YLim', [0,1])
         cim = S.pop_ID;
         title(cim)
-        print('-dpng', [folder, cim, '.png'])
+        print('-dpng', [S.folder, cim, '.png'])
         close
     else
         plot(1:3, performance, 'b*')
@@ -194,14 +198,15 @@ if mode=='i'
         set(gca, 'YLim', [0,1])
         cim = S.pop_ID;
         title(cim)
-        print('-dpng', [folder, cim, '.png'])
+        print('-dpng', [S.folder, cim, '.png'])
         close
     end        
 end
 
 %% Monitor
 
-avg_performance
+S.avg_performance
+%[avg_performance, G{1}.L.thresholds(1), sparseness(G{1}.D.trainingset), sparseness(G{1}.T.outputs), abs(sparseness(G{1}.D.trainingset) - sparseness(G{1}.T.outputs))]
 % mean(S.fitness)
 % %boxplot(S.fitness)
 % %mutation_rate_pergeneration = 5*50*2*S.mutation_rate;

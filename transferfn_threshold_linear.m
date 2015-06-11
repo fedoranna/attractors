@@ -1,5 +1,5 @@
 % threshold linear activation function
-% weightedsum and threshold can be a number or an array of numbers
+% weightedsum and threshold have to be the same size
 
 function activation = transferfn_threshold_linear(weightedsum, threshold, gain)
 
