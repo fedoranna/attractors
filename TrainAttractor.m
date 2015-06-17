@@ -12,14 +12,14 @@ function A = TrainAttractor(A, varargin)
 switch A.P.learning_rule
     case 'Hebbian1' % Rolls, 2012, p45
         inc = A.P.learning_rate * (A.D.trainingset'* A.D.trainingset);
-        A.W.state = A.W.state * A.P.forgetting_rate;
+        A.W.state = A.W.state * (1-A.P.forgetting_rate);
         A.W.state = A.W.state + inc;
         A.W.state = A.W.state .* A.W.masking_matrix;
         
     case 'Hebbian2'
         a = A.P.activation_function(A.W.state * A.D.trainingset', A.P.threshold)'; % activation before learning for each pattern
         inc = A.P.learning_rate * (a' * a);
-        A.W.state = A.W.state * A.P.forgetting_rate;
+        A.W.state = A.W.state * (1-A.P.forgetting_rate);
         A.W.state = A.W.state +  inc;
         A.W.state = A.W.state .* A.W.masking_matrix;
 
@@ -43,7 +43,7 @@ switch A.P.learning_rule
             inc = A.D.trainingset' * A.D.trainingset;
         end
         
-        A.W.state = A.W.state * A.P.forgetting_rate;
+        A.W.state = A.W.state * (1-A.P.forgetting_rate);
         A.W.state = A.W.state + A.P.learning_rate * inc;       
         A.W.state = A.W.state .* A.W.masking_matrix;
 
@@ -71,7 +71,7 @@ switch A.P.learning_rule
             inc = (1./(N*(a'*a))) .* (A.D.trainingset' * A.D.trainingset);
         end
 
-        A.W.state = A.W.state * A.P.forgetting_rate;
+        A.W.state = A.W.state * (1-A.P.forgetting_rate);
         A.W.state = A.W.state + A.P.learning_rate * inc;       
         A.W.state = A.W.state .* A.W.masking_matrix;
         %weightVisualizer(A.W);

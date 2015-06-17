@@ -20,6 +20,7 @@ end
 G = cell(S.popsize, S.nbof_generations); % each column is a generation
 for i = 1:S.popsize
     P = getParameters(S.parametersets(i));
+    %P = S.P;
     
     % Seeds
     P.inputseed = seeds(i);
@@ -77,7 +78,13 @@ for g = 2:S.nbof_generations
     if strcmp(S.selection_type, 'truncation')
         
         [x, index] =  sortrows(fitness, g-1); % ascending order
-        selected = index((end-S.nbof_selected+1) : end);
+        
+        i = 0;
+        while fitness(index(numel(index)-S.nbof_selected+1-i)) == fitness(index(numel(index)-S.nbof_selected+1))
+            startof_tie = numel(index) - S.nbof_selected + 1 - i;
+            i = i+1;
+        end
+        selected = index(startof_tie : end);
         
         selected_outputs = cell(1,numel(selected));
         for i = 1:numel(selected)
@@ -85,18 +92,6 @@ for g = 2:S.nbof_generations
         end
         
     end
-    
-    %     % Mutation after selection
-    %     if S.mutation_rate > 0
-    %         for i = 1 : numel(selected_outputs)
-    %             mutation_matrix = rand(size(selected_outputs{i}));
-    %             for j = 1:numel(selected_outputs{i})
-    %                 if mutation_matrix(j) < S.mutation_rate
-    %                     selected_outputs{i}(j) = 1 - selected_outputs{i}(j);
-    %                 end
-    %             end
-    %         end
-    %     end
     
     % "Reproduction": feeding back the selected outputs - retrain and test networks
     next = 1;
@@ -110,7 +105,7 @@ for g = 2:S.nbof_generations
         G{i, g}.D.trainingset = selected_outputs{next};
         
         % Forget
-        G{i, g}.W.state = G{i, g}.W.state * S.forgetting_rate;
+        G{i, g}.W.state = G{i, g}.W.state * (1-S.forgetting_rate);
                 
         % Train and test
         if rand < S.retraining
@@ -134,8 +129,6 @@ for i = 1:S.popsize
     fitness(i,end) = getfield(G{i, end}.T, S.fitness_measure);
 end
 S.fitness = fitness;
-
-
 
 
 

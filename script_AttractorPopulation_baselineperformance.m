@@ -1,7 +1,7 @@
 clear all
 addpath(genpath('C:\Matlab_functions\Attractor\'));
 
-S.mode = 's'; % selection or individuals
+S.mode = 'i'; % selection or individuals
 
 %% P
 %         % Random seeds                      % 'noseed' or a number bw 0 and 2^31-2;
@@ -53,19 +53,19 @@ S.mode = 's'; % selection or individuals
 
 if S.mode == 's'
     beeps = 3;
-    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. selection\';
+    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\2. Modified Rolls model\';
     save2excel = 1;
     save_matfile = 1;
     save_plot = 1;
     
     repetitions = 5;
-    S.popsize = 100;                    % number of attractor networks in the population
-    S.nbof_generations = 5;             % number of generations of attractor networks
+    S.popsize = 10;                    % number of attractor networks in the population
+    S.nbof_generations = 3;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
     S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 1; % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 0;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
-    S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
+    S.forgetting_rate = 1;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
     S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
     S.mutation_rate = 0;              % probability of mutation/bit during reproduction
     
@@ -80,15 +80,15 @@ if S.mode == 'i'
     S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\2. Modified Rolls model\';
     save2excel = 1;
     save_matfile = 1;
-    save_plot = 1;
+    save_plot = 0;
     
-    S.popsize = 1;                    % should be 1 if trained_percentage=100
-    S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
+    S.popsize = 20;                    % should be 1 if trained_percentage=100
+    S.fitness_measure = 'nbof_correct';    % choose from the fields of T - see in TestAttractor fn
     S.parametersets = zeros(1, S.popsize) + 1820123; % ID of the parameterset for the attractors
     S.popseeds = [1];
     
     % Don't change these when testing individual networks!
-    repetitions = 1;                   % should be 1
+    repetitions = 100;                   % should be 1
     S.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
     S.nbof_generations = 1;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
@@ -106,13 +106,49 @@ if numel(S.popseeds) < repetitions
     S.popseeds = randperm(repetitions*1000,repetitions);
 end
 
+S.P = getParameters(S.parametersets(1));
+toplot1 = NaN(S.popsize, repetitions);
+toplot2 = NaN(S.popsize, repetitions);
+
 for r = 1:repetitions
     r
     S.popseed = S.popseeds(r);
+    
+    S.P.nbof_patterns = r;
     [G, S] = AttractorPop(S);
     F(r,:) = mean(S.fitness, 1); % average fitness of the population in each generations; rows=repetitions; columns=generations
     
+    for i = 1:S.popsize
+        toplot1(i,r) = G{i,end}.T.nbof_correct;
+        toplot2(i,r) = G{i,end}.T.nbof_90perc_correct;
+    end
 end
+
+%% Plot
+
+hold all
+boxplot(toplot1)%, 'labels', {'Correlation'; 'Proportion of correct neurons'; 'Proportion of correct patterns'})
+plot(mean(toplot1), '-k', 'LineWidth', 2)  
+xlabel('Number of trained patterns')
+ylabel('Number of 100% recalled patterns')
+cim = [S.pop_ID, '-100%recall'];
+title(cim)
+print('-dpng', [S.folder, cim, '.png'])
+close
+
+hold all
+boxplot(toplot2)%, 'labels', {'Correlation'; 'Proportion of correct neurons'; 'Proportion of correct patterns'})
+plot(mean(toplot2), '-k', 'LineWidth', 2)  
+%set(gca,'square')
+axis square
+set(gca, 'YLim', [0,100])
+set(gca, 'XTick', 10.5:10:100.5, 'XTickLabel', {'10','20','30','40','50','60','70', '80', '90', '100'})
+xlabel('Number of trained patterns')
+ylabel('Number of 90% recalled patterns')
+cim = [S.pop_ID, '-90%recall'];
+title(cim)
+print('-dpng', [S.folder, cim, '.png'])
+close
 
 %% Change fitness measure
 
@@ -219,7 +255,6 @@ if S.mode=='s' && save_plot == 1
     hold all
     for r = 1:repetitions
         plot(1:S.nbof_generations, F(r,:), 'LineWidth', 2)
-        set(gca,'XTick', 1:S.nbof_generations)
     end
     xlabel('Generations')
     ylabel([{'Average fitness of the population'};{['(', S.fitness_measure,')']}])
@@ -255,7 +290,8 @@ end
 
 %% Monitor
 
-%[S.runningtime_min, S.avg_performance, abs(sparseness(G{1}.D.trainingset) - sparseness(G{1}.T.outputs))]
+mean(toplot2)
+S.avg_performance
 %[avg_performance, G{1}.L.thresholds(1), sparseness(G{1}.D.trainingset), sparseness(G{1}.T.outputs), abs(sparseness(G{1}.D.trainingset) - sparseness(G{1}.T.outputs))]
 % mean(S.fitness)
 % %boxplot(S.fitness)

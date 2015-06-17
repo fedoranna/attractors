@@ -64,7 +64,7 @@ switch v
         P.strenght_of_memory_traces = 0;    %%% multiplier of the initial weights
         
         % Architecture
-        P.nbof_neurons = 25;               % number of neurons: 1000
+        P.nbof_neurons = 100;               % number of neurons: 1000
         P.weight_deletion_mode = 'Poisson';   % 'exact', 'probabilistic', 'poisson'
         P.connection_density = 0.4;         % [0,1]; the proportion of existing weights to all possible weights; the mean number of weight per neuron
         P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
@@ -74,7 +74,7 @@ switch v
         
         % Input
         P.lengthof_patterns = P.nbof_neurons;   % the length of patterns; = P.nbof_neurons
-        P.nbof_patterns = 4;                %%% number of patterns in the testing set
+        P.nbof_patterns = 1;                %%% number of patterns in the testing set
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
         
@@ -112,8 +112,8 @@ switch v
         P.strenght_of_memory_traces = 0;    % multiplier of the initial weights
         
         % Architecture
-        P.nbof_neurons = 100;              % number of neurons: 1000
-        P.weight_deletion_mode = 'probabilistic';   % 'exact', 'probabilistic', 'poisson'
+        P.nbof_neurons = 1000;               % number of neurons: 1000
+        P.weight_deletion_mode = 'Poisson';   % 'exact', 'probabilistic', 'Poisson'
         P.connection_density = 0.4;         %%% [0,1]; the proportion of existing weights to all possible weights
         P.activation_function = @transferfn_piecewise_linear;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_step (0/1)
         P.gain_factor = 0.5;                % slope of the threshold linear activation function
@@ -122,20 +122,20 @@ switch v
         
         % Input
         P.lengthof_patterns = P.nbof_neurons;   % the length of patterns; = P.nbof_neurons
-        P.nbof_patterns = 10;               %%% number of patterns in the testing set
+        P.nbof_patterns = 40;               %%% number of patterns in the testing set
         P.sparseness = 0.1;                 %%% proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
         
         % Training
         P.trained_percentage = 100;         % percentage of selected items for training from the testing set
         P.learning_rule = 'covariance2';    % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2' (see TrainAttractor)
-        P.learning_rate = 1;              %%% learning rate
+        P.learning_rate = 1;                %%% learning rate
         P.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
         P.autothreshold_aftertraining = 1;  % 0/1; enables automatic threshold after training
-        P.threshold_algorithm = @set_threshold_aftertraining_det; % @set_threshold_aftertraining, ..._dynamic, ..._det
-        P.sparseness_difference = 0;    %%% maximum allowable difference between input and output sparseness wehn setting threshold
-        P.threshold_incr = 0.1;             %%% the increment with which to change the threshold during threshold setting; starting increment when threshold setting is dynamic
-        P.threshold_setting_timeout = 50; %%% maximum number of steps when setting the threshold
+        P.threshold_algorithm = @set_threshold_aftertraining; % @set_threshold_aftertraining, ..._dynamic, ..._det
+        P.sparseness_difference = 0.001;        % maximum allowable difference between input and output sparseness wehn setting threshold
+        P.threshold_incr = 0.1;             % the increment with which to change the threshold during threshold setting; starting increment when threshold setting is dynamic
+        P.threshold_setting_timeout = 500;   % maximum number of steps when setting the threshold
         
         % Testing
         P.timeout = 30;                     %%% the maximum number of recurrent cycles
@@ -145,7 +145,8 @@ switch v
         P.field_ratio = 0.3;                %%% s, the strength of the external field
         P.autothreshold_duringtesting = 0;  % 0/1; automatically set thresholds separately for each neuron after each recurrent cycle during testing
         P.noise = 0;                        % the percentage of flipped input bits during testing
-        P.missing_perc = 0;                 % the percentage of missing input bits during testing
+        P.missing_perc = 10;                 % the percentage of missing input bits during testing
+             
         %%
     otherwise
         'Error: Parameter set was not found!'
