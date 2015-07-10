@@ -1,5 +1,5 @@
 clear all
-addpath(genpath('C:\Matlab_functions\Attractor\'));
+addpath(genpath('C:\Users\Anna\SkyDrive\Documents\MATLAB\'));
 
 S.mode = 's'; % selection or individuals
 
@@ -53,24 +53,24 @@ S.mode = 's'; % selection or individuals
 
 if S.mode == 's'
     beeps = 3;
-    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. selection\';
+    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. Selection\';
     save2excel = 1;
-    save_matfile = 1;
+    save_matfile = 0;
     save_plot = 1;
     
-    repetitions = 5;
-    S.popsize = 100;                    % number of attractor networks in the population
-    S.nbof_generations = 5;             % number of generations of attractor networks
+    repetitions = 1;
+    S.popsize = 1000;                    % number of attractor networks in the population
+    S.nbof_generations = 50;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
-    S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction
+    S.selected_perc = 10;               % [0, 100]; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 1; % the number of global testing patterns; if 0 then each individual is tested on its own testing set
-    S.retraining = 0;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
-    S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
-    S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
+    S.retraining = 0.5;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
+    S.forgetting_rate = 0.7;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
+    S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
     S.mutation_rate = 0;              % probability of mutation/bit during reproduction
     
     S.parametersets = zeros(1, S.popsize) + 1820122; % ID of the parameterset for the attractors
-    S.popseeds = [1:5];
+    S.popseeds = [1];
 end
 
 %% Parameters for testing individual networks
@@ -110,9 +110,11 @@ for r = 1:repetitions
     r
     S.popseed = S.popseeds(r);
     [G, S] = AttractorPop(S);
-    F(r,:) = mean(S.fitness, 1); % average fitness of the population in each generations; rows=repetitions; columns=generations
+    F(r,:) = nanmean(S.fitness, 1); % average fitness of the population in each generations; rows=repetitions; columns=generations
     
 end
+
+'Finished running';
 
 %% Change fitness measure
 
@@ -142,8 +144,11 @@ if S.mode == 's'
         S.avg_performance(3) = avg_F(end);
     end
 end
+'Changed fitness measure';
 
 %% Save data
+
+'Saving data...'
 
 S.runningtime_min = toc/60;
 if save_matfile == 1 % Save all variables in .mat file; later can be loaded
@@ -170,6 +175,7 @@ if save2excel
         S.selected_perc,
         S.nbof_global_testingpatterns,
         S.retraining,
+        S.forgetting_rate,
         S.mutation_rate,
         S.runningtime_min;
         P.inputseed,
@@ -212,6 +218,8 @@ if save2excel
     
 end
 
+'Saved data'
+
 %% Plot for 's' mode
 
 if S.mode=='s' && save_plot == 1
@@ -223,7 +231,7 @@ if S.mode=='s' && save_plot == 1
     end
     xlabel('Generations')
     ylabel([{'Average fitness of the population'};{['(', S.fitness_measure,')']}])
-    set(gca, 'YLim', [-0.01,1.01])
+    %set(gca, 'YLim', [-0.01,1.01])
     
     cim = S.pop_ID;
     title(cim)
@@ -280,7 +288,7 @@ if 1==0
 end
 
 %% Beep
-
+'Finished simulation'
 for i = 1:beeps
     beep
     pause(0.5)

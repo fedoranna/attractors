@@ -64,7 +64,7 @@ switch v
         P.strenght_of_memory_traces = 0;    %%% multiplier of the initial weights
         
         % Architecture
-        P.nbof_neurons = 100;               % number of neurons: 1000
+        P.nbof_neurons = 1000;               % number of neurons: 1000
         P.weight_deletion_mode = 'Poisson';   % 'exact', 'probabilistic', 'poisson'
         P.connection_density = 0.4;         % [0,1]; the proportion of existing weights to all possible weights; the mean number of weight per neuron
         P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_tanh (-1/+1), @transferfn_step (0/1)
@@ -74,7 +74,7 @@ switch v
         
         % Input
         P.lengthof_patterns = P.nbof_neurons;   % the length of patterns; = P.nbof_neurons
-        P.nbof_patterns = 1;                %%% number of patterns in the testing set
+        P.nbof_patterns = 10;                %%% number of patterns in the testing set
         P.sparseness = 0.1;                 % proportion of 1s in the input
         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
         

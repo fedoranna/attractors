@@ -72,6 +72,9 @@ for g = 2:S.nbof_generations
     % Collecting the fitness measure
     for i = 1:S.popsize
         fitness(i,g-1) = getfield(G{i, g-1}.T, S.fitness_measure);
+        if isnan(fitness(i,g-1))
+            fitness(i,g-1) = 0;
+        end
     end
     
     % Select the best output patterns

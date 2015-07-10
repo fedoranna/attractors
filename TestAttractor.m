@@ -74,7 +74,7 @@ A.T.correctness = A.T.outputs == A.D.testingset_O;
 A.T.scores = mean(A.T.correctness, 2);          % 0 to 1; proportion of correct neurons for each testing pattern; same as 1 - normalized Hamming distance
 corr_matrix = corrcoef(A.T.outputs, A.D.testingset_O);
 if isnan(corr_matrix(1,2)) % if either the output or the input consists of straight 0s or 1s, corr = NaN
-    corr_matrix(1,2) = mean(A.T.scores);
+    corr_matrix(1,2) = 0;
 end
 
 %%  Possible fitness measures
