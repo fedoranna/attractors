@@ -28,7 +28,7 @@ P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; mat
 
 % Training
 P.trained_percentage = 100;         % percentage of selected items for training from the testing set
-P.learning_rule = 'covariance2';    % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2' (see TrainAttractor)
+P.learning_rule = 'covariance1';    % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2' (see TrainAttractor)
 P.learning_rate = 1;                %%% learning rate
 P.autothreshold_aftertraining = 1;  % 0/1; enables automatic threshold after training
 P.threshold_algorithm = @set_threshold_aftertraining_det; % @set_threshold_aftertraining, ..._dynamic, ..._det
@@ -49,18 +49,18 @@ P.missing_perc = 0;                 % the percentage of missing input bits durin
 %% Change default parameters
 
 folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. Palimpsest memory\uncorrelated patterns\';
-P.inputseed = 1651559639;
-P.weightseed = 1651559654;
-P.trainingseed = 1651559652;
+% P.inputseed = 1651559639;
+% P.weightseed = 1651559654;
+% P.trainingseed = 1651559652;
 
-set = 10;
-forgetting_rates = 1;
+set = 1;
+forgetting_rates = 0:0.1:1;
 
 P.nbof_patterns = 10;
 P.noise = 5;
 criteria = 0.95;
 
-nonrandom = 0;
+nonrandom = 1;
 morefigures = 0;
 
 %% Non-random input
@@ -80,9 +80,10 @@ for f = 1:numel(forgetting_rates)
     'Running...'
     A = InitializeAttractor(P);
     
-    if nonrandom > 1
+    if nonrandom > 0
         A.D.testingset = patterns;
-        A.D.testingset_O = patterns;
+        A.D.testingset_O = A.D.testingset;
+        A.D.testingset_I = A.D.testingset_O;
         
         % Noisy input
         flippingmatrix = double(rand(size(A.D.testingset_I)) <= (A.P.noise/100));
@@ -145,26 +146,38 @@ for f = 1:numel(forgetting_rates)
         title('Weight distribution after the 1st session')
         print('-dpng', '-r200', [folder, A.P.ID, '_weights1.png'])
         close
-
+        
         figure
         boxplot(scores)
         xlabel('Training sessions')
         ylabel('Scores')
         print('-dpng', '-r200', [folder, A.P.ID, '_scores.png'])
         close
-        %
-        figure
+        
+        figure % This only works if there were more than 1 pattern and more than 1 session
         toplot = [sum(scores>0.9)',  sum(scores>0.91)', sum(scores>0.92)',  sum(scores>0.93)',  sum(scores>0.94)',  sum(scores>0.95)',  sum(scores>0.96)',  sum(scores>0.97)',  sum(scores>0.98)',  sum(scores>0.99)'];
-        boxplot(toplot, 'labels', 0.9:0.01:0.99)
+        boxplot(toplot, 'labels', 0.90:0.01:0.99)
         ylabel('Number of recalled patterns (score > criteria)')
         xlabel('Criteria')
         title(['Training set = ', num2str(set), ' patterns'])
         print('-dpng', '-r200', [folder, A.P.ID, '_boxplots.png'])
         close
+        
+        figure
+        correlations = NaN(P.nbof_patterns);
+        for i = 1:P.nbof_patterns
+            for j = i+1 : P.nbof_patterns
+                corr_matrix = corrcoef(A.D.testingset(i,:), A.D.testingset(j,:));
+                correlations(i,j) = corr_matrix(1,2);
+            end
+        end
+        hist(correlations(:))
+        xlabel('Correlations')
+        ylabel('Number of pairs')
+        print('-dpng', '-r200', [folder, A.P.ID, '_correlations.png'])
+        close       
+        
     end
-
-    % sum(scores>criteria);
-    min(min(scores))
     
     %% Statistics
     
@@ -187,4 +200,4 @@ for i = 1:3
     pause(0.5)
 end
 
-
+%%

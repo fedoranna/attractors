@@ -1,13 +1,5 @@
 function A = TrainAttractor(A, varargin)
 
-% ip = inputParser;
-% defaultWeightVisualizer = @NOP;
-% addRequired(ip, 'A');
-% addOptional(ip, 'weightVisualizer', defaultWeightVisualizer);
-% parse(ip, A, varargin{:});
-% A = ip.Results.A;
-% weightVisualizer = ip.Results.weightVisualizer;
-
 %%
 switch A.P.learning_rule
     case 'Hebbian1' % Rolls, 2012, p45
@@ -23,52 +15,34 @@ switch A.P.learning_rule
         A.W.state = A.W.state +  inc;
         A.W.state = A.W.state .* A.W.masking_matrix;
         
-    case 'covariance1' % Rolls, 2012
-        a = sparseness(A.D.trainingset);
-        N = size(A.D.trainingset, 1);
-        inc = (1/(N*a*a)) * ((A.D.trainingset-a)' * (A.D.trainingset-a));
+    case 'covariance1' % Rolls, 2012; sparseness is calculated for the whole trainingset
+        a = sparseness(A.D.trainingset); % this is one scalar
+        N = size(A.D.trainingset, 1); % number of patterns
         
-        % Problem 1: if there is a neuron which is never active, then there
-        % will be Infs in the first part and 0s in the second part and
-        % Inf*0 = NaN. The whole inc will be NaN!
-        for i = 1:numel(inc)
-            if isnan(inc(i))
-                inc(i) = 0;
-            end
-        end
-        
-        % Problem 2: if there is only one pattern, trainingset-arep = 0s,
-        % so the whole inc will be 0s
-        if N == 1
-            inc = A.D.trainingset' * A.D.trainingset;
+        if a > 0
+            inc = (1/(N*a*a)) * ((A.D.trainingset-a)' * (A.D.trainingset-a));
+        else
+            inc = zeros(size(A.W.state));
         end
         
         A.W.state = A.W.state * (1-A.P.forgetting_rate);
         A.W.state = A.W.state + A.P.learning_rate * inc;
         A.W.state = A.W.state .* A.W.masking_matrix;
         
-    case 'covariance2' % same as covariance1 but mean activity is calculated per neuron, and not per network
-        %a = mean(A.D.trainingset, 1); % this is a row vector
-        a = sparseness(A.D.trainingset); % this is one scalar
-        N = size(A.D.trainingset, 1);
-        %arep = repmat(a,N,1);
-        arep = repmat(a, (size(A.D.trainingset)));
+    case 'covariance2' % sparseness is calculated per neuron
+        a = mean(A.D.trainingset, 1); % this is a row vector        
+        N = size(A.D.trainingset, 1); % number of patterns
+        arep = repmat(a,N,1);
         
         if N>1
             inc = (1./(N*(a'*a))) .* ((A.D.trainingset-arep)' * (A.D.trainingset-arep));           
-        else
-            % Problem 1: if there is only one pattern, trainingset-arep = 0s,
-            % so the whole inc will be 0s; the rule below reduces the training
-            % to the simplest Hebbian rule (it is not a covariance rule
-            % anymore)
-            if N == 1
-                inc = (1./(N*(a'*a))) .* (A.D.trainingset' * A.D.trainingset);
-            end
+        else % Problem 1: if there is only one pattern, trainingset-arep = 0s, so the whole inc would be 0            
+            inc = (1./(N*(a'*a))) .* (A.D.trainingset' * A.D.trainingset);            
         end
-        % Problem 2: if there is a neuron which is never active, then then
-        % the sum will be 0 and the nominator will also be 0 -> 0/0 = NaN
+        
+        % Problem 2: if there is a neuron which is never active, then there will be 0s in a'*a
         for i = 1:numel(inc)
-            if isnan(inc(i))
+            if isnan(inc(i)) || isinf(inc(i))
                 inc(i) = 0;
             end
         end
@@ -76,7 +50,9 @@ switch A.P.learning_rule
         A.W.state = A.W.state * (1-A.P.forgetting_rate);
         A.W.state = A.W.state + A.P.learning_rate * inc;
         A.W.state = A.W.state .* A.W.masking_matrix;
-        %weightVisualizer(A.W);
+
+    case 'Storkey'
+        
         
     otherwise
         'Error: learning rule is unknown!'
