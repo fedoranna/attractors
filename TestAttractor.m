@@ -42,7 +42,8 @@ else % asynchronous update
             %                     s(i) = 0;
             %                 end
             %             end
-            external_field = A.D.testingset_I(:,neuron) .* (s/sparseness(A.D.testingset_I));
+            % nanmean(s)?
+            external_field = A.D.testingset_I(:,neuron) .* (s/sparseness(A.D.testingset_I(:,neuron)));
             A.L.local_field = internal_field + external_field; % column vector for the current neuron and each pattern
             
             if A.P.autothreshold_duringtesting

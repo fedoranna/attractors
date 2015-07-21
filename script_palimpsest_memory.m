@@ -1,71 +1,40 @@
 clear all
 addpath(genpath('C:\Users\Anna\SkyDrive\Documents\MATLAB\'));
 
-%% Parameters
-
-% Random seeds                      % 'noseed' or a number bw 0 and 2^31-2;
-P.inputseed = 'noseed';                    % random seed for pattern generation
-P.weightseed = 'noseed';            % random seed for generating initial weights
-P.trainingseed = 'noseed';          % random seed for selecting training patterns
-
-% Initialization
-P.weight_init = @rand;             % @zeros, @rand, @ones (@randn can be negative); with Hebbian2 + @zeros the network does not learn!
-P.strenght_of_memory_traces = 0;    % multiplier of the initial weights
-
-% Architecture
-P.nbof_neurons = 1000;               % number of neurons: 1000
-P.weight_deletion_mode = 'Poisson';   % 'exact', 'probabilistic', 'Poisson'
-P.connection_density = 0.4;         %%% [0,1]; the proportion of existing weights to all possible weights
-P.activation_function = @transferfn_step;   % @transferfn_threshold_linear [0, Inf], @transferfn_piecewise_linear [0,1], @transferfn_step (0/1)
-P.gain_factor = 0.5;                % slope of the threshold linear activation function
-P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; the middle of the linear part for @transferfn_piecewise_linear; starting value when autoupdate enabled
-P.allow_selfloops = 0;              % 0/1; whether to allow self-loops
-
-% Input
-P.lengthof_patterns = P.nbof_neurons;   % the length of patterns; = P.nbof_neurons
-P.sparseness = 0.1;                 %%% proportion of 1s in the input
-P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
-
-% Training
-P.trained_percentage = 100;         % percentage of selected items for training from the testing set
-P.learning_rule = 'covariance1';    % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2' (see TrainAttractor)
-P.learning_rate = 1;                %%% learning rate
-P.autothreshold_aftertraining = 1;  % 0/1; enables automatic threshold after training
-P.threshold_algorithm = @set_threshold_aftertraining_det; % @set_threshold_aftertraining, ..._dynamic, ..._det
-P.sparseness_difference = NaN;        % maximum allowable difference between input and output sparseness wehn setting threshold
-P.threshold_incr = NaN;             % the increment with which to change the threshold during threshold setting; starting increment when threshold setting is dynamic
-P.threshold_setting_timeout = NaN;   % maximum number of steps when setting the threshold
-
-% Testing
-P.timeout = 30;                     %%% the maximum number of recurrent cycles
-P.convergence_threshold = 0;        % convergence threshold for recurrence
-P.tolerance = 0;                    % if>0 then binarizes output; tolerance for the difference between output and active/inactive values
-P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
-P.field_ratio = 0.3;                %%% s, the strength of the external field
-P.autothreshold_duringtesting = 0;  % 0/1; automatically set thresholds separately for each neuron after each recurrent cycle during testing
-P.noise = 0;                        % the percentage of flipped input bits during testing
-P.missing_perc = 0;                 % the percentage of missing input bits during testing
-
 %% Change default parameters
 
-folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. Palimpsest memory\uncorrelated patterns\';
-% P.inputseed = 1651559639;
-% P.weightseed = 1651559654;
-% P.trainingseed = 1651559652;
+load('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\Attractor_params_Storkey.mat')
+folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. Palimpsest memory\3. Storkey\';
+
+P.inputseed = 1651559639;
+P.weightseed = 1651559654;
+P.trainingseed = 1651559652;
 
 set = 1;
-forgetting_rates = 0:0.1:1;
-
-P.nbof_patterns = 10;
-P.noise = 5;
+P.nbof_patterns = 500;
 criteria = 0.95;
+morefigures = 1;
+forgetting_rates = [0];
 
-nonrandom = 1;
-morefigures = 0;
+P.noise = 5;
+P.autothreshold_aftertraining = 1;
+P.threshold_algorithm = @set_threshold_aftertraining_det;
+P.sparseness = 0.3;
+P.synchronous_update = 0;
+
+% P.field_ratio = 0;
+
+P.connection_density = 0.8;
+P.weight_deletion_mode = 'Poisson';
+
+% P.inactive_input = 0;
+% P.activation_function = @transferfn_step;
+
 
 %% Non-random input
 
-if nonrandom == 1 % This cannot be learnt
+nonrandom = 0;
+if nonrandom == 1
     on = P.nbof_neurons * P.sparseness;
     patterns = zeros(P.nbof_patterns,P.nbof_neurons);
     for i = 1:P.nbof_patterns
@@ -99,16 +68,17 @@ for f = 1:numel(forgetting_rates)
     
     scores = NaN(P.nbof_patterns, floor(P.nbof_patterns/set));
     for i = 1:floor(P.nbof_patterns/set)
-        A.D.trainingset = A.D.testingset((i-1)*set+1 : set*i, :);
+        
+        A.D.trainingset = A.D.testingset((i-1)*set+1 : set*i, :);        
         A = TrainAttractor(A);
+        
+        if sum(isnan(A.W.state(:)))>0
+            i
+            break
+        end
+        
         A = TestAttractor(A);
         scores(:,i) = A.T.scores;
-        
-        %numel(unique(A.W.state))
-        %sparseness(A.T.outputs)
-        %a = sparseness(A.T.outputs((i-1)*set+1 : set*i, :));
-        %b = sparseness(A.T.outputs((floor(P.nbof_patterns/set)-1)*set+1 : set*floor(P.nbof_patterns/set), :));
-        %[a,b]
         
     end
     
@@ -175,8 +145,14 @@ for f = 1:numel(forgetting_rates)
         xlabel('Correlations')
         ylabel('Number of pairs')
         print('-dpng', '-r200', [folder, A.P.ID, '_correlations.png'])
-        close       
+        close
         
+        figure
+        plot(sum(scores>criteria))
+        ylabel('Number of recalled patterns')
+        xlabel('Number of training sessions')
+        print('-dpng', '-r200', [folder, A.P.ID, '_recalled.png'])
+        close
     end
     
     %% Statistics
@@ -201,3 +177,4 @@ for i = 1:3
 end
 
 %%
+[A.P.inputseed, A.P.weightseed, A.P.trainingseed]

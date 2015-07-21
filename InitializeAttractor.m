@@ -8,11 +8,6 @@ P.ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 if strcmp(func2str(P.activation_function), 'transferfn_piecewise_linear') || strcmp(func2str(P.activation_function), 'transferfn_step')
     P.gain_factor = NaN;
 end
-if strcmp(func2str(P.threshold_algorithm), 'set_threshold_aftertraining_det')
-    P.sparseness_difference = NaN; 
-    P.threshold_incr = NaN;
-    P.threshold_setting_timeout = NaN;
-end
 
 %% Generate input pattern and testingset
 
@@ -26,13 +21,12 @@ else
 end
 
 % If input consists of 0s and 1s; might not be unique!
-if P.inactive_input == 0
-    D.testingset = double(rand(P.nbof_patterns, P.lengthof_patterns) <= P.sparseness);
-end
+D.testingset = double(rand(P.nbof_patterns, P.lengthof_patterns) <= P.sparseness);
 
 % If input consists of -1 and +1; might not be unique!
 if P.inactive_input == -1
-    D.testingset = 2*floor(2*rand(P.nbof_patterns, P.nbof_neurons))-1; % Create random binary patterns of -1 and +1; each input pattern is a row in the matrix
+    %D.testingset = 2*floor(2*rand(P.nbof_patterns, P.nbof_neurons))-1; % Create random binary patterns of -1 and +1; each input pattern is a row in the matrix
+    D.testingset = sign(D.testingset-0.1);
 end
 
 % Make testingset unique
@@ -45,14 +39,18 @@ D.testingset_I = D.testingset_O;
 
 % Noisy input
 flippingmatrix = double(rand(size(D.testingset_I)) <= (P.noise/100));
-D.testingset_I = abs(flippingmatrix - D.testingset_I);
+if P.inactive_input == 0
+    D.testingset_I = abs(flippingmatrix - D.testingset_I);
+end
+if P.inactive_input == -1
+    flippingmatrix = sign(flippingmatrix - 0.1) * -1;
+    D.testingset_I = D.testingset_I .* flippingmatrix;
+end
 
 % Incomplete input
 nbof_deleted = round((P.missing_perc/100) * numel(D.testingset_O));
 deleted = randperm(numel(D.testingset_O), nbof_deleted);
 D.testingset_I(deleted) = 0;
-
-P.sparseness_input = sparseness(D.testingset); % this is the actual (realized) sparseness
 
 %% Choose trainingset
 
@@ -165,10 +163,8 @@ switch P.weight_deletion_mode
         
     case 'Poisson'
         W.masking_matrix = poissrnd(P.connection_density, size(W.state)); % This function is in the Statistics Toolbox
-        
+        W.masking_matrix(diagonal) = 0;
 end
-
-
 
 W.state = W.state .* W.masking_matrix;
 
