@@ -66,6 +66,12 @@ switch A.P.learning_rule
         'Error: learning rule is unknown!'
 end
 
+%% Normalize
+
+if A.P.normalize == 1
+    A.W.state = A.W.state / max(A.W.state(:));
+end
+
 %% Set threshold
 
 if A.P.autothreshold_aftertraining

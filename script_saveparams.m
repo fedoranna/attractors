@@ -27,7 +27,7 @@ P.allow_selfloops = 0;              % 0/1; whether to allow self-loops
 
 % Input
 P.lengthof_patterns = P.nbof_neurons;   % the length of patterns; = P.nbof_neurons
-P.sparseness = 0.5;                 % proportion of 1s in the input
+P.sparseness = 0.5;                 % (0,1); proportion of 1s in the input
 P.inactive_input = -1;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
 
 % Training
@@ -36,6 +36,7 @@ P.learning_rule = 'Storkey';        % 'Hebbian1', 'Hebbian2', 'covariance1', 'co
 P.learning_rate = 1;                % learning rate
 P.autothreshold_aftertraining = 0;  % 0/1; enables automatic threshold after training
 P.threshold_algorithm = @NaN;        % @set_threshold_aftertraining, ..._dynamic, ..._det
+P.normalize = 0;                     % normalize weights after training?
 %P.sparseness_difference = NaN;      % maximum allowable difference between input and output sparseness wehn setting threshold
 %P.threshold_incr = NaN;             % the increment with which to change the threshold during threshold setting; starting increment when threshold setting is dynamic
 %P.threshold_setting_timeout = NaN;  % maximum number of steps when setting the threshold
@@ -51,7 +52,7 @@ P.noise = 0;                        % the percentage of flipped input bits durin
 P.missing_perc = 0;                 % the percentage of missing input bits during testing
 
 
-save('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\Attractor_params_Storkey.mat', 'P')
+save('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\Attractor_params_Storkey2.mat', 'P')
 'Parameters saved'
 
 

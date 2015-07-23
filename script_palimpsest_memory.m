@@ -3,7 +3,7 @@ addpath(genpath('C:\Users\Anna\SkyDrive\Documents\MATLAB\'));
 
 %% Change default parameters
 
-load('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\Attractor_params_Storkey.mat')
+load('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\Attractor_params_Storkey2.mat')
 folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. Palimpsest memory\3. Storkey\';
 
 P.inputseed = 1651559639;
@@ -11,22 +11,21 @@ P.weightseed = 1651559654;
 P.trainingseed = 1651559652;
 
 set = 1;
-P.nbof_patterns = 500;
+P.nbof_patterns = 1000;
 criteria = 0.95;
-morefigures = 1;
+morefigures = 0;
 forgetting_rates = [0];
 
 P.noise = 5;
 P.autothreshold_aftertraining = 1;
 P.threshold_algorithm = @set_threshold_aftertraining_det;
-P.sparseness = 0.3;
 P.synchronous_update = 0;
 
-% P.field_ratio = 0;
+P.sparseness = 0.5;%0.3;
+P.connection_density = 1;%0.5;
+P.field_ratio = 0;
 
-P.connection_density = 0.8;
-P.weight_deletion_mode = 'Poisson';
-
+% P.weight_deletion_mode = 'probabilistic';
 % P.inactive_input = 0;
 % P.activation_function = @transferfn_step;
 
@@ -67,16 +66,10 @@ for f = 1:numel(forgetting_rates)
     end
     
     scores = NaN(P.nbof_patterns, floor(P.nbof_patterns/set));
-    for i = 1:floor(P.nbof_patterns/set)
+    for i = 1 : floor(P.nbof_patterns/set)
         
-        A.D.trainingset = A.D.testingset((i-1)*set+1 : set*i, :);        
+        A.D.trainingset = A.D.testingset((i-1)*set+1 : set*i, :);
         A = TrainAttractor(A);
-        
-        if sum(isnan(A.W.state(:)))>0
-            i
-            break
-        end
-        
         A = TestAttractor(A);
         scores(:,i) = A.T.scores;
         
@@ -86,7 +79,7 @@ for f = 1:numel(forgetting_rates)
     
     save([folder, A.P.ID, '.mat'], '-v7.3');
     
-    %% Figure: heatmap of scores
+    %% Figure: heatmap of scores and number of recalled patterns
     
     figure
     suptitle(['Forgetting rate = ',num2str(P.forgetting_rate),'; Set = ', num2str(set), '; Criteria = ', num2str(criteria)], 10)
@@ -108,9 +101,16 @@ for f = 1:numel(forgetting_rates)
     print('-dpng', '-r200', [folder, A.P.ID, '_palimpsest.png'])
     close
     
+    figure
+    plot(sum(scores>criteria))
+    ylabel('Number of recalled patterns')
+    xlabel('Number of training sessions')
+    print('-dpng', '-r200', [folder, A.P.ID, '_recalled.png'])
+    close
+    
     %% More figures
     
-    if morefigures == 1
+    if morefigures
         figure
         hist(A.W.state(:))
         title('Weight distribution after the 1st session')
@@ -147,15 +147,9 @@ for f = 1:numel(forgetting_rates)
         print('-dpng', '-r200', [folder, A.P.ID, '_correlations.png'])
         close
         
-        figure
-        plot(sum(scores>criteria))
-        ylabel('Number of recalled patterns')
-        xlabel('Number of training sessions')
-        print('-dpng', '-r200', [folder, A.P.ID, '_recalled.png'])
-        close
     end
     
-    %% Statistics
+    %% Diagnostics
     
     % d = diag(scores, 0);
     % d_felette = diag(scores, 1); % trained in the previous session
@@ -166,6 +160,7 @@ for f = 1:numel(forgetting_rates)
     % new_result = [set, P.forgetting_rate, mean(d_felette),mean(d_alatta),p];
     % result=[result;new_result];
     %result
+    %[A.P.inputseed, A.P.weightseed, A.P.trainingseed]
     
 end
 
@@ -176,5 +171,10 @@ for i = 1:3
     pause(0.5)
 end
 
-%%
-[A.P.inputseed, A.P.weightseed, A.P.trainingseed]
+
+
+
+
+
+
+

@@ -5,15 +5,17 @@
 % Same threshold for all neurons
 
 function A = set_threshold_aftertraining_det(A)
-
+%%
 sparseness_input = sparseness(A.D.trainingset);
 
 output = A.D.trainingset;
+%%
+
 for r = 1 : A.P.timeout
     
     previous_output = output;
     weighted_sum = previous_output * A.W.state;
-    sorted = sort(weighted_sum(:));
+    sorted = sort(weighted_sum(:)); % increasing order
     index = numel(sorted) - round(sparseness_input * numel(sorted));
     value = sorted(index);
     
@@ -45,8 +47,8 @@ for r = 1 : A.P.timeout
         upper_thr = sorted(upper_index) + 1;
     end
     
-    lower_sparseness = sparseness(A.P.activation_function(weighted_sum * A.W.state, repmat(lower_thr, size(weighted_sum)), A.P.gain_factor));
-    upper_sparseness = sparseness(A.P.activation_function(weighted_sum * A.W.state, repmat(upper_thr, size(weighted_sum)), A.P.gain_factor));
+    lower_sparseness = sparseness(A.P.activation_function(weighted_sum, repmat(lower_thr, size(weighted_sum)), A.P.gain_factor));
+    upper_sparseness = sparseness(A.P.activation_function(weighted_sum, repmat(upper_thr, size(weighted_sum)), A.P.gain_factor));
     
     if abs(lower_sparseness - sparseness_input) <= abs(upper_sparseness - sparseness_input)
         A.L.thresholds = zeros(1, A.P.nbof_neurons) + lower_thr;
@@ -54,10 +56,13 @@ for r = 1 : A.P.timeout
         A.L.thresholds = zeros(1, A.P.nbof_neurons) + upper_thr;
     end
     
-    output = A.P.activation_function(previous_output * A.W.state, repmat(A.L.thresholds, size(previous_output, 1), 1), A.P.gain_factor);
+    output = A.P.activation_function(weighted_sum, A.L.thresholds, A.P.gain_factor);
     diff = abs(output - previous_output);
+    
     if sum(diff) <= A.P.convergence_threshold
+        r
         break
     end
     
 end
+%%
