@@ -8,11 +8,11 @@ S.mode = 's'; % selection or individuals
 %         P.inputseed = 'noseed';             % random seed for pattern generation
 %         P.weightseed = 'noseed';            % random seed for generating initial weights
 %         P.trainingseed = 'noseed';          % random seed for selecting training patterns
-%         
+%
 %         % Initialization
 %         P.weight_init = @zeros;             % @zeros, @rand, @ones (@randn can be negative); with Hebbian2 + @zeros the network does not learn!
 %         P.strenght_of_memory_traces = 0;    % multiplier of the initial weights
-%         
+%
 %         % Architecture
 %         P.nbof_neurons = 100;               % number of neurons: 1000
 %         P.weight_deletion_mode = 'Poisson';   % 'exact', 'probabilistic', 'Poisson'
@@ -21,13 +21,13 @@ S.mode = 's'; % selection or individuals
 %         P.gain_factor = 0.5;                % slope of the threshold linear activation function
 %         P.threshold = 0;                    % activation threshold for @transferfn_step and @transferfn_threshold_linear; the middle of the linear part for @transferfn_piecewise_linear; starting value when autoupdate enabled
 %         P.allow_selfloops = 0;              % 0/1; whether to allow self-loops
-%         
+%
 %         % Input
 %         P.lengthof_patterns = P.nbof_neurons;   % the length of patterns; = P.nbof_neurons
 %         P.nbof_patterns = 10;               %%% number of patterns in the testing set
 %         P.sparseness = 0.3;                 %%% proportion of 1s in the input
 %         P.inactive_input = 0;               % the value of inactive inputs: 0 or -1; match it with the transfer function!
-%         
+%
 %         % Training
 %         P.trained_percentage = 100;         % percentage of selected items for training from the testing set
 %         P.learning_rule = 'covariance2';    % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2' (see TrainAttractor)
@@ -38,7 +38,7 @@ S.mode = 's'; % selection or individuals
 %         P.sparseness_difference = 0;        % maximum allowable difference between input and output sparseness wehn setting threshold
 %         P.threshold_incr = 0.1;             % the increment with which to change the threshold during threshold setting; starting increment when threshold setting is dynamic
 %         P.threshold_setting_timeout = 50;   % maximum number of steps when setting the threshold
-%         
+%
 %         % Testing
 %         P.timeout = 30;                     %%% the maximum number of recurrent cycles
 %         P.convergence_threshold = 0;        % convergence threshold for recurrence
@@ -53,212 +53,164 @@ S.mode = 's'; % selection or individuals
 
 if S.mode == 's'
     beeps = 3;
-    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. Selection\';
+    folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\6. Selection_Storkey\';
     save2excel = 1;
-    save_matfile = 0;
+    save_matfile = 1;
     save_plot = 1;
     
-    repetitions = 1;
-    S.popsize = 1000;                    % number of attractor networks in the population
-    S.nbof_generations = 50;             % number of generations of attractor networks
-    S.selection_type = 'truncation';    % 'truncation'
-    S.selected_perc = 10;               % [0, 100]; the selected percentage of individuals for reproduction
-    S.nbof_global_testingpatterns = 1; % the number of global testing patterns; if 0 then each individual is tested on its own testing set
-    S.retraining = 0.5;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
-    S.forgetting_rate = 0.7;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
-    S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
-    S.mutation_rate = 0;              % probability of mutation/bit during reproduction
+    B.repetitions = 5;                  % number of independent runs
+    B.popseeds = [704, 2, 3, 4, 5];     % random seed of independent runs
     
-    S.parametersets = zeros(1, S.popsize) + 1820122; % ID of the parameterset for the attractors
-    S.popseeds = [1];
+    S.popsize = 10;                     % number of attractor networks in the population
+    S.nbof_generations = 4;             % number of generations of attractor networks
+    S.selection_type = 'truncation';    % 'truncation'
+    S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction
+    S.nbof_global_testingpatterns = 1;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
+    S.retraining = 1;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
+    S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
+    S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
+    S.mutation_rate = 0.0000000000025;              % probability of mutation/bit during reproduction
+    S.known_global_problem = 0;         % 1: the global problem is used as the first trainingpattern of the first network in the population; 0: the global problem is unknown to all networks
+    S.firstgen_input_random = 1;        % 1: the testing input of each network in the first generation is a subset of its trainingset; 0: the testing set is independent of the trainingset
+    S.parametersets = zeros(1, S.popsize) + 2015; % name of the parameterset for the attractors
+    S.save_pop = 0;                     % 1: save the whole population in G; 0: only save the last generation
 end
 
 %% Parameters for testing individual networks
 
 if S.mode == 'i'
     beeps = 3;
-    S.folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\2. Modified Rolls model\';
+    folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\6. Selection_Storkey\';
     save2excel = 1;
     save_matfile = 1;
     save_plot = 1;
     
-    S.popsize = 1;                    % should be 1 if trained_percentage=100
-    S.fitness_measure = 'correlation';    % choose from the fields of T - see in TestAttractor fn
-    S.parametersets = zeros(1, S.popsize) + 1820123; % ID of the parameterset for the attractors
-    S.popseeds = [1];
+    B.repetitions = 2;                  % number of independent runs
+    B.popseeds = [];                    % random seed of independent runs
+    S.popsize = 10;                     % number of attractor networks in the population
+    S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
+    S.parametersets = zeros(1, S.popsize) + 2015; % ID of the parameterset for the attractors
     
     % Don't change these when testing individual networks!
-    repetitions = 1;                   % should be 1
-    S.forgetting_rate = 1;              % weights are multiplied by this number before each trainig session
+    S.forgetting_rate = 0;              % weights are multiplied by this number before each trainig session
     S.nbof_generations = 1;             % number of generations of attractor networks
     S.selection_type = 'truncation';    % 'truncation'
-    S.selected_perc = 0;               % 0 to 100; the selected percentage of individuals for reproduction
+    S.selected_perc = 0;                % 0 to 100; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 0;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 0;                   % 0 to 1; probabilistic retraining in each generation with the selected outputs
+    S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
     S.mutation_rate = 0;                % probability of mutation/bit during reproduction
+    S.known_global_problem = 0;         % 1: the global problem is used as the first trainingpattern of the first network in the population; 0: the global problem is unknown to all networks
+    S.firstgen_input_random = 1;        % 1: the testing input of each network in the first generation is a subset of its trainingset; 0: the testing set is independent of the trainingset
+    S.save_pop = 0;
+  
 end
 
 %% Run
 
-tic
-if numel(S.popseeds) < repetitions
+if numel(B.popseeds) < B.repetitions
     rng shuffle
-    S.popseeds = randperm(repetitions*1000,repetitions);
+    B.popseeds = randperm(B.repetitions*1000,B.repetitions);
 end
 
-for r = 1:repetitions
+B.tic = tic;
+B.batch_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
+pause(1)
+B.fitness = NaN(B.repetitions, S.nbof_generations);
+B.excelfile = [folder, 'RESULTS.xlsx'];
+P = getParameters(S.parametersets(1));
+
+for r = 1:B.repetitions
+    
+    %% Run simulations
+    
+    'Running...'
     r
-    S.popseed = S.popseeds(r);
+    S.popseed = B.popseeds(r);
     [G, S] = AttractorPop(S);
-    F(r,:) = nanmean(S.fitness, 1); % average fitness of the population in each generations; rows=repetitions; columns=generations
+    B.fitness(r,:) = nanmean(S.fitness, 1); % average fitness of the population in each generations; rows=repetitions; columns=generations
+    
+    %% Save data
+    
+    'Saving data...'
+    
+    if save_matfile
+        %save([folder, S.pop_ID, '.mat'], 'S', 'B', 'P', 'G', '-v7.3');
+        save([folder, S.pop_ID, '.mat'], 'S', 'B', 'P', '-v7.3');
+    end
+    
+    if save2excel
+        collection = collect_parameters(S,P);
+        where = size(xlsread(B.excelfile),1)+1;
+        xlswrite(B.excelfile, collection', 'results', ['A', num2str(where)]);        
+    end
+    
+    %% Plotting
+    
+    'Plotting...'
+    
+    if S.mode=='s' && save_plot
+        figure
+        plot(1:S.nbof_generations, B.fitness(r,:), 'LineWidth', 2)
+        %set(gca,'XTick', 1:S.nbof_generations)
+        xlabel('Generations')
+        ylabel([{'Average fitness of the population'};{'(average score)'}])
+        %set(gca, 'YLim', [-0.01,1.01])
+        
+        cim = S.pop_ID;
+        title(cim)
+        print('-dpng', [folder, cim, '.png'])
+        close
+    end    
+    
+    if S.mode == 'i' && save_plot
+        performance = NaN(S.popsize, 3);
+        performance(:,1) = S.correlation;
+        performance(:,2) = S.avg_score;
+        performance(:,3) = S.propof_correct;
+
+        if size(performance,1)>1
+            figure
+            boxplot(performance, 'labels', {'Correlation'; 'Proportion of correct neurons'; 'Proportion of correct patterns'})
+            set(gca, 'YLim', [0,1.1])
+            cim = S.pop_ID;
+            title(cim)
+            print('-dpng', [folder, cim, '.png'])
+            close
+        else
+            figure
+            plot(1:3, performance, 'b*')
+            set(gca, 'XLim', [0.5,3.5])
+            set(gca, 'XTick', [1 2 3], 'XTicklabel', {'Correlation', 'Proportion of correct neurons', 'Proportion of correct patterns'})
+            set(gca, 'YLim', [0,1.1])
+            cim = S.pop_ID;
+            title(cim)
+            print('-dpng', [folder, cim, '.png'])
+            close
+        end
+    end
     
 end
 
-'Finished running';
+%% Common plot for repetitions of 's' mode
 
-%% Change fitness measure
+'Printing common plot...'
 
-if S.mode == 'i'
-    performance = NaN(size(G,1), 3);
-    for i = 1:numel(G)
-        performance(i,1) = getfield(G{i}.T, 'correlation');
-    end
-    for i = 1:numel(G)
-        performance(i,2) = getfield(G{i}.T, 'avg_score');
-    end
-    for i = 1:numel(G)
-        performance(i,3) = getfield(G{i}.T, 'propof_correct');
-    end
-    S.avg_performance = mean(performance,1);
-end
-if S.mode == 's'
-    S.avg_performance = NaN(1,3);
-    avg_F = mean(F,1);
-    if strcmp(S.fitness_measure, 'correlation')
-        S.avg_performance(1) = avg_F(end);
-    end
-    if strcmp(S.fitness_measure, 'avg_score')
-        S.avg_performance(2) = avg_F(end);
-    end
-    if strcmp(S.fitness_measure, 'propof_correct')
-        S.avg_performance(3) = avg_F(end);
-    end
-end
-'Changed fitness measure';
-
-%% Save data
-
-'Saving data...'
-
-S.runningtime_min = toc/60;
-if save_matfile == 1 % Save all variables in .mat file; later can be loaded
-    save([S.folder, S.pop_ID, '.mat'], 'S', 'G', 'F', '-v7.3');
-end
-
-if save2excel
-    excelfile = [S.folder, 'RESULTS.xlsx'];
-    where = size(xlsread(excelfile),1)+1;
-    P = getParameters(S.parametersets(1));
-    tosave = {
-        S.pop_ID,
-        S.avg_performance(1),
-        S.avg_performance(2),
-        S.avg_performance(3),       
-        S.mode,
-        S.popsize,
-        S.fitness_measure,
-        S.parametersets,
-        S.popseeds,
-        repetitions,
-        S.nbof_generations,
-        S.selection_type,
-        S.selected_perc,
-        S.nbof_global_testingpatterns,
-        S.retraining,
-        S.forgetting_rate,
-        S.mutation_rate,
-        S.runningtime_min;
-        P.inputseed,
-        P.weightseed,
-        P.trainingseed,
-        func2str(P.weight_init),
-        P.strenght_of_memory_traces,
-        P.nbof_neurons,
-        P.weight_deletion_mode,
-        P.connection_density,
-        func2str(P.activation_function),
-        P.gain_factor,
-        P.threshold,
-        P.allow_selfloops,
-        P.lengthof_patterns,
-        P.nbof_patterns,
-        P.sparseness,
-        P.inactive_input,
-        P.trained_percentage,
-        P.learning_rule,
-        P.learning_rate,
-        P.forgetting_rate,
-        P.autothreshold_aftertraining,
-        func2str(P.threshold_algorithm),
-        P.sparseness_difference,
-        P.threshold_incr,
-        P.threshold_setting_timeout,
-        P.timeout,
-        P.convergence_threshold,
-        P.tolerance,
-        P.synchronous_update,
-        P.field_ratio,
-        P.autothreshold_duringtesting,
-        P.noise,
-        P.missing_perc,
-        };
-    
-    % Save summary of results to an excel file
-    xlswrite(excelfile, tosave', 'results', ['A', num2str(where)]);
-    
-end
-
-'Saved data'
-
-%% Plot for 's' mode
-
-if S.mode=='s' && save_plot == 1
+if S.mode=='s' && save_plot && B.repetitions>1
     figure
     hold all
-    for r = 1:repetitions
-        plot(1:S.nbof_generations, F(r,:), 'LineWidth', 2)
-        set(gca,'XTick', 1:S.nbof_generations)
+    for r = 1:B.repetitions
+        plot(1:S.nbof_generations, B.fitness(r,:), 'LineWidth', 2)
+        %set(gca,'XTick', 1:S.nbof_generations)
     end
     xlabel('Generations')
-    ylabel([{'Average fitness of the population'};{['(', S.fitness_measure,')']}])
+    ylabel([{'Average fitness of the population'};{'(average score)'}])
     %set(gca, 'YLim', [-0.01,1.01])
     
-    cim = S.pop_ID;
+    cim = B.batch_ID;
     title(cim)
-    print('-dpng', [S.folder, cim, '.png'])
+    print('-dpng', [folder, cim, '.png'])
     close
-end
-
-%% Plot for 'i' mode
-
-if S.mode=='i' && save_plot == 1
-    if size(performance,1)>1
-        boxplot(performance, 'labels', {'Correlation'; 'Proportion of correct neurons'; 'Proportion of correct patterns'})
-        set(gca, 'YLim', [0,1])
-        cim = S.pop_ID;
-        title(cim)
-        print('-dpng', [S.folder, cim, '.png'])
-        close
-    else
-        plot(1:3, performance, 'b*')
-        set(gca, 'XLim', [0.5,3.5])
-        set(gca, 'XTick', [1 2 3], 'XTicklabel', {'Correlation', 'Proportion of correct neurons', 'Proportion of correct patterns'})
-        set(gca, 'YLim', [0,1])
-        cim = S.pop_ID;
-        title(cim)
-        print('-dpng', [S.folder, cim, '.png'])
-        close
-    end        
 end
 
 %% Monitor
@@ -276,8 +228,8 @@ end
 if 1==0
     %figure
     %for i = 1:10
-        imagesc(G{1}.W.state)
-        %title(num2str(i))
+    imagesc(G{1}.W.state)
+    %title(num2str(i))
     %end
     colorbar
     axis('square')

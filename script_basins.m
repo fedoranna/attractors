@@ -4,17 +4,17 @@ addpath(genpath('C:\Users\Anna\SkyDrive\Documents\MATLAB\'));
 %% Change default parameters
 
 load('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\Attractor_params_Treves_modified.mat') % Storkey_modified, Storkey_original, Treves_modified
-folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\3. Palimpsest memory\2. uncorrelated patterns\';
+folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\4. Attractor basins\';
 
 P.inputseed = 1651559639;
 P.weightseed = 1651559654;
 P.trainingseed = 1651559652;
 
-set = 1;
-P.nbof_patterns = 10;
+set = 30;
+P.nbof_patterns = 120;
 criteria = 0.95;
 morefigures = 1;
-forgetting_rates = 0:0.3:0.9;
+forgetting_rates = 1;
 P.noise = 5;
 
 %% Non-random input
@@ -60,6 +60,8 @@ for f = 1:numel(forgetting_rates)
         A = TestAttractor(A);
         scores(:,i) = A.T.scores;
         i
+        
+        C(i) = A;
         
     end
     
@@ -151,6 +153,11 @@ for f = 1:numel(forgetting_rates)
     %[A.P.inputseed, A.P.weightseed, A.P.trainingseed]
     
 end
+
+%% Analyze
+
+
+
 
 %% Beep
 
