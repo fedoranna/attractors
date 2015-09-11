@@ -35,11 +35,11 @@ for i = 1:S.popsize
     A = InitializeAttractor(P);
     
     % Put the global problem (the solution) into one of the networks
-    if S.known_global_problem && i == 1
+    if S.known_global_problem==1 && i==1
         A.D.trainingset(1,:) = S.global_problem;
     end
     
-    % Set global testing pattern
+    % Set global testing pattern and first input patterns if necessary
     if S.nbof_global_testingpatterns > 0
         A.D.testingset_O = S.global_problem;
         if S.firstgen_input_random
@@ -59,12 +59,12 @@ for i = 1:S.popsize
 end
 ['Generation No. 1']
 
-% Collecting fitness measures
+% Initializing fitness measures
 S.correlation = NaN(S.popsize, S.nbof_generations);
 S.avg_score = NaN(S.popsize, S.nbof_generations);
 S.propof_correct = NaN(S.popsize, S.nbof_generations);
 if S.nbof_generations == 1
-    for i = 1:S.popsize        
+    for i = 1:S.popsize
         S.correlation(i, 1) = G{i, 1}.T.correlation;
         S.avg_score(i, 1) = G{i, 1}.T.avg_score;
         S.propof_correct(i, 1) = G{i, 1}.T.propof_correct;
@@ -89,21 +89,12 @@ for g = 2:S.nbof_generations
                 mutationmatrix = sign(mutationmatrix - 0.1) * -1;
                 G{i, g-1}.T.outputs = G{i, g-1}.T.outputs .* mutationmatrix;
             end
-            
-            G{i, g-1}.T.correctness = G{i, g-1}.T.outputs == G{i, g-1}.D.testingset_O;
-            corr_matrix = corrcoef(G{i, g-1}.T.outputs, G{i, g-1}.D.testingset_O);
-            G{i, g-1}.T.correlation = corr_matrix(1,2);                 % -1 to +1; correlation
-            G{i, g-1}.T.scores = mean(G{i, g-1}.T.correctness, 2);      % 0 to 1; proportion of correct neurons for each testing pattern
-            G{i, g-1}.T.avg_score = mean(G{i, g-1}.T.scores);           % 0 to 1; avg score on all testing patterns
-            G{i, g-1}.T.avg_score_perc = mean(G{i, g-1}.T.scores)*100;  % 0 to 100; avg score percentage on all testing patterns
-            G{i, g-1}.T.nbof_correct = sum(G{i, g-1}.T.scores == 1);    % 0 to P.nbof_patterns; nb of perfectly correct testing patterns
-            G{i, g-1}.T.nbof_90perc_correct = sum(G{i, g-1}.T.scores > 0.9);
-            G{i, g-1}.T.percof_correct = (G{i, g-1}.T.nbof_correct / size(G{i, g-1}.T.outputs, 1)) * 100; % 0 to 100; percentage of perfectly correct testing patterns
+            G{i,g-1} = calculate_performance(G{i,g-1});
         end
     end
     
     % Collecting the fitness measure
-    for i = 1:S.popsize        
+    for i = 1:S.popsize
         S.correlation(i, g-1) = G{i, g-1}.T.correlation;
         S.avg_score(i, g-1) = G{i, g-1}.T.avg_score;
         S.propof_correct(i, g-1) = G{i, g-1}.T.propof_correct;
@@ -114,11 +105,12 @@ for g = 2:S.nbof_generations
         end
     end
     
-    % Select the best output patterns
-    if strcmp(S.selection_type, 'truncation')
+    % Select output patterns
+    if strcmp(S.selection_type, 'elitist')
         
         [x, index] =  sortrows(fitness, g-1); % ascending order
         
+        % The best S.nbof_selected outputs are selected (more, if there is a tie at the lower boundary)
         i = 0;
         while fitness(index(numel(index)-S.nbof_selected+1-i)) == fitness(index(numel(index)-S.nbof_selected+1))
             startof_tie = numel(index) - S.nbof_selected + 1 - i;
@@ -183,24 +175,23 @@ if S.mutation_rate > 0
             G{i, end}.T.outputs = G{i, end}.T.outputs .* mutationmatrix;
         end
         
-        G{i, end}.T.correctness = G{i, end}.T.outputs == G{i, end}.D.testingset_O;
-        corr_matrix = corrcoef(G{i, end}.T.outputs, G{i, end}.D.testingset_O);
-        G{i, end}.T.correlation = corr_matrix(1,2);                 % -1 to +1; correlation
-        G{i, end}.T.scores = mean(G{i, end}.T.correctness, 2);      % 0 to 1; proportion of correct neurons for each testing pattern
-        G{i, end}.T.avg_score = mean(G{i, end}.T.scores);           % 0 to 1; avg score on all testing patterns
-        G{i, end}.T.avg_score_perc = mean(G{i, end}.T.scores)*100;  % 0 to 100; avg score percentage on all testing patterns
-        G{i, end}.T.nbof_correct = sum(G{i, end}.T.scores == 1);    % 0 to P.nbof_patterns; nb of perfectly correct testing patterns
-        G{i, end}.T.nbof_90perc_correct = sum(G{i, end}.T.scores > 0.9);
-        G{i, end}.T.percof_correct = (G{i, end}.T.nbof_correct / size(G{i, end}.T.outputs, 1)) * 100; % 0 to 100; percentage of perfectly correct testing patterns
+        G{i,end}=calculate_performance(G{i,end});        
+       
     end
 end
 
 % Collecting the fitness measure
 for i = 1:S.popsize
+    
+    S.correlation(i, end) = G{i, end}.T.correlation;
+    S.avg_score(i, end) = G{i, end}.T.avg_score;
+    S.propof_correct(i, end) = G{i, end}.T.propof_correct;    
+    
     fitness(i,end) = getfield(G{i, end}.T, S.fitness_measure);
     if isnan(fitness(i,end))
         fitness(i,end) = 0;
     end
+    
 end
 
 S.fitness = fitness;
@@ -209,7 +200,7 @@ S.popavg_correlation = nanmean(S.correlation,1);
 S.popavg_avgscore = nanmean(S.avg_score,1);
 S.popavg_propofcorrect = nanmean(S.propof_correct,1);
 
-S.runningtime_min = toc/60;    
+S.runningtime_min = toc/60;
 
 
 

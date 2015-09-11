@@ -58,18 +58,18 @@ if S.mode == 's'
     save_matfile = 1;
     save_plot = 1;
     
-    B.repetitions = 5;                  % number of independent runs
+    B.repetitions = 1;                  % number of independent runs
     B.popseeds = [704, 2, 3, 4, 5];     % random seed of independent runs
     
-    S.popsize = 10;                     % number of attractor networks in the population
-    S.nbof_generations = 4;             % number of generations of attractor networks
-    S.selection_type = 'truncation';    % 'truncation'
+    S.popsize = 1000;                     % number of attractor networks in the population
+    S.nbof_generations = 400;             % number of generations of attractor networks
+    S.selection_type = 'elitist';    % 'truncation'
     S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction
     S.nbof_global_testingpatterns = 1;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 1;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
     S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
     S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
-    S.mutation_rate = 0.0000000000025;              % probability of mutation/bit during reproduction
+    S.mutation_rate = 0.0025;              % probability of mutation/bit during reproduction
     S.known_global_problem = 0;         % 1: the global problem is used as the first trainingpattern of the first network in the population; 0: the global problem is unknown to all networks
     S.firstgen_input_random = 1;        % 1: the testing input of each network in the first generation is a subset of its trainingset; 0: the testing set is independent of the trainingset
     S.parametersets = zeros(1, S.popsize) + 2015; % name of the parameterset for the attractors
@@ -155,7 +155,7 @@ for r = 1:B.repetitions
         %set(gca,'XTick', 1:S.nbof_generations)
         xlabel('Generations')
         ylabel([{'Average fitness of the population'};{'(average score)'}])
-        %set(gca, 'YLim', [-0.01,1.01])
+        set(gca, 'YLim', [0.4,1])
         
         cim = S.pop_ID;
         title(cim)
@@ -205,7 +205,7 @@ if S.mode=='s' && save_plot && B.repetitions>1
     end
     xlabel('Generations')
     ylabel([{'Average fitness of the population'};{'(average score)'}])
-    %set(gca, 'YLim', [-0.01,1.01])
+    set(gca, 'YLim', [0.4,1])
     
     cim = B.batch_ID;
     title(cim)
