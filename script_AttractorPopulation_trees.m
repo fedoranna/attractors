@@ -53,29 +53,30 @@ S.mode = 's'; % selection or individuals
 
 if S.mode == 's'
     beeps = 3;
-    folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\6. Selection_Storkey\';
+    folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\7. Trees\';
     save2excel = 1;
     save_matfile = 1;
     save_plot = 1;
+    make_movie = 1;
     
     B.repetitions = 1;                  % number of independent runs
     B.popseeds = [704];     % 704 random seed of independent runs
     
-    S.nbof_generations = 30;             % number of generations of attractor networks
-    S.popsize = 10;                     % number of attractor networks in the population
+    S.nbof_generations = 200;             % number of generations of attractor networks
+    S.popsize = 1000;                     % number of attractor networks in the population
     S.selection_type = 'elitist';    % 'truncation'
     S.selected_perc = 10;               % [0, 100]; the selected percentage of individuals for reproduction
-    S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
+    S.fitness_measure = 'fitness_side';    % choose from the fields of T - see in calculate_performance fn
     S.random_training_order = 1;
     S.random_testing_order = 1;
-    S.mutation_rate = 0.0025;              % probability of mutation/bit during reproduction
+    S.mutation_rate = 0.003;              % probability of mutation/bit during reproduction
         
-    S.nbof_global_testingpatterns = 1;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 1;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
+    S.nbof_global_testingpatterns = 0;
     S.known_global_problem = 0;         % 1: the global problem is used as the first trainingpattern of the first network in the population; 0: the global problem is unknown to all networks
     S.firstgen_input_random = 1;        % 1: the testing input of each network in the first generation is a subset of its trainingset; 0: the testing set is independent of the trainingset
     S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
-    S.parametersets = zeros(1, S.popsize) + 2015; % name of the parameterset for the attractors
+    S.parametersets = zeros(1, S.popsize) + 20154; % name of the parameterset for the attractors
     S.save_pop = 0;                     % 1: save the whole population in G; 0: only save the last generation
     S.do_distance_test = 0;             % testonly works when S.nbof_global_tesingpatterns = 1
 end
@@ -131,7 +132,7 @@ for r = 1:B.repetitions
     'Running...'
     r
     S.popseed = B.popseeds(r);
-    [G, S] = AttractorPop(S);
+    [G, S] = AttractorPop_trees(S);
     B.fitness(r,:) = nanmean(S.fitness, 1); % average fitness of the population in each generations; rows=repetitions; columns=generations
     
     %% Save data
@@ -159,13 +160,17 @@ for r = 1:B.repetitions
         %set(gca,'XTick', 1:S.nbof_generations)
         xlabel('Generations')
         ylabel([{'Average fitness of the population'};{'(average score)'}])
-        set(gca, 'YLim', [0.4,1.01])
+        set(gca, 'YLim', [0,1.01])
         
         cim = S.pop_ID;
         title(cim)
         print('-dpng', [folder, cim, '.png'])
-        close
+        close        
     end    
+    
+    if make_movie
+        moviemaker_trees(S,P,folder);
+    end
     
     if S.mode == 'i' && save_plot
         performance = NaN(S.popsize, 3);

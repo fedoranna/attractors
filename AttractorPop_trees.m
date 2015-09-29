@@ -1,4 +1,4 @@
-function [G, S] = AttractorPop(S)
+function [G, S] = AttractorPop_trees(S)
 
 %% Initialize population
 
@@ -10,22 +10,8 @@ S.pop_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 rng(S.popseed, 'twister');
 seeds = randperm(S.popsize*30000, S.popsize*3);
 
-% Set global problem (this will be the pattern against which each output is evaluated)
-P = getParameters(S.parametersets(1));
-if S.nbof_global_testingpatterns > 0
-    S.global_problem = double(rand(S.nbof_global_testingpatterns, P.lengthof_patterns) <= P.sparseness);
-    if P.inactive_input == -1
-        S.global_problem = sign(S.global_problem-0.1);
-    end
-else S.global_problem = NaN;
-end
-
 % First generation
 G = cell(S.popsize, S.nbof_generations); % each column is a generation
-if S.do_distance_test 
-    S.closest_trained_pattern_indices = NaN(S.popsize, S.nbof_generations);
-    S.closest_trained_pattern_distances = NaN(S.popsize, S.nbof_generations);
-end
 for i = 1:S.popsize
     P = getParameters(S.parametersets(i));
     %P = S.P;
@@ -36,7 +22,7 @@ for i = 1:S.popsize
     P.trainingseed = seeds(i + S.popsize*2);
     
     % Initialize population
-    A = InitializeAttractor(P);
+    A = InitializeAttractor_trees(P);
     
     % Put the global problem (the solution) into one of the networks
     if S.known_global_problem==1 && i==1
@@ -58,7 +44,7 @@ for i = 1:S.popsize
     
     % Train and test the first generation
     A = TrainAttractor(A); % trainingset is the size of P.nbof_patterns
-    A = TestAttractor(A);  % testingset is the size of S.nbof_global_testingpatterns
+    A = TestAttractor_trees(A);  % testingset is the size of S.nbof_global_testingpatterns
     G{i, 1} = A;
     if S.do_distance_test 
         G{i, 1}.D.trained_patterns = G{i, 1}.D.trainingset;
@@ -69,14 +55,11 @@ for i = 1:S.popsize
 end
 
 % Initializing fitness measures
-S.correlation = NaN(S.popsize, S.nbof_generations);
-S.avg_score = NaN(S.popsize, S.nbof_generations);
-S.propof_correct = NaN(S.popsize, S.nbof_generations);
+S.best_positionD = NaN(S.nbof_generations,3);
+S.fitness_activation = NaN(S.popsize, S.nbof_generations);
 if S.nbof_generations == 1
     for i = 1:S.popsize
-        S.correlation(i, 1) = G{i, 1}.T.correlation;
-        S.avg_score(i, 1) = G{i, 1}.T.avg_score;
-        S.propof_correct(i, 1) = G{i, 1}.T.propof_correct;
+        S.fitness_activation = G{i, 1}.T.fitness_activation;
     end
 end
 
@@ -98,16 +81,20 @@ for g = 2:S.nbof_generations
                 mutationmatrix = sign(mutationmatrix - 0.1) * -1;
                 G{i, g-1}.T.outputs = G{i, g-1}.T.outputs .* mutationmatrix;
             end
-            G{i,g-1} = calculate_performance(G{i,g-1});
+            
+            % No mutation in the z coordinate before 100 generations
+            if g < 100
+            %if G{i, g-1}.T.outputs(1) ==  G{i, g-1}.P.inactive_input
+                G{i, g-1}.T.outputs(200:300) = G{i, g-1}.P.inactive_input;
+            end
+            
+            G{i,g-1} = calculate_performance_trees(G{i,g-1});
         end
     end
     
     % Collecting the fitness measure
     for i = 1:S.popsize
-        S.correlation(i, g-1) = G{i, g-1}.T.correlation;
-        S.avg_score(i, g-1) = G{i, g-1}.T.avg_score;
-        S.propof_correct(i, g-1) = G{i, g-1}.T.propof_correct;
-        
+        S.fitness_activation(i, g-1) = G{i, g-1}.T.fitness_activation;     
         fitness(i,g-1) = getfield(G{i, g-1}.T, S.fitness_measure);
         if isnan(fitness(i,g-1))
             fitness(i,g-1) = 0;
@@ -124,6 +111,9 @@ for g = 2:S.nbof_generations
         while fitness(index(numel(index)-S.nbof_selected+1-i)) == fitness(index(numel(index)-S.nbof_selected+1))
             startof_tie = numel(index) - S.nbof_selected + 1 - i;
             i = i+1;
+            if i==(numel(index)-S.nbof_selected+1)
+                break
+            end
         end
         selected = index(startof_tie : end);
         
@@ -131,6 +121,14 @@ for g = 2:S.nbof_generations
         for i = 1:numel(selected)
             selected_outputs{i} = G{selected(i), g-1}.T.outputs; % the best output is the first
         end
+        
+        % Store best output
+        best_output = G{index(end), g-1}.T.outputs;
+        unit = numel(best_output)/3;
+        x4 = sum(best_output(1:unit)==1);
+        y4 = sum(best_output(unit+1:unit*2)==1);
+        z4 = sum(best_output(unit*2+1:unit*3)==1);
+        S.best_positionD(g-1,:) = [x4,y4,z4];
         
     end
     
@@ -186,7 +184,7 @@ for g = 2:S.nbof_generations
         
     end
     
-    ['Generation No. ' num2str(g-1), ', Fitness = ', num2str(nanmean(fitness(:,g-1)))]%, ', N = ', num2str(numel(unique(fitness(:,g-1))))]
+    ['Generation No. ' num2str(g-1), ', Fitness = ', num2str(nanmean(fitness(:,g-1))), ' Pos: ', num2str(S.best_positionD(g-1,:)) ]%, ', N = ', num2str(numel(unique(fitness(:,g-1))))]
     
 end
 
@@ -204,7 +202,7 @@ if S.mutation_rate > 0
             G{i, end}.T.outputs = G{i, end}.T.outputs .* mutationmatrix;
         end
         
-        G{i,end}=calculate_performance(G{i,end});        
+        G{i,end}=calculate_performance_trees(G{i,end});        
        
     end
 end
@@ -212,23 +210,28 @@ end
 % Collecting the fitness measure
 for i = 1:S.popsize
     
-    S.correlation(i, end) = G{i, end}.T.correlation;
-    S.avg_score(i, end) = G{i, end}.T.avg_score;
-    S.propof_correct(i, end) = G{i, end}.T.propof_correct;    
-    
+    S.fitness_activation(i, end) = G{i, end}.T.fitness_activation;    
     fitness(i,end) = getfield(G{i, end}.T, S.fitness_measure);
     if isnan(fitness(i,end))
         fitness(i,end) = 0;
     end
     
 end
+if strcmp(S.selection_type, 'elitist')
+        
+        [x, index] =  sortrows(fitness, S.nbof_generations); % ascending order
+        
+        % Store best output
+        best_output = G{index(end), end}.T.outputs;
+        unit = numel(best_output)/3;
+        x4 = sum(best_output(1:unit)==1);
+        y4 = sum(best_output(unit+1:unit*2)==1);
+        z4 = sum(best_output(unit*2+1:unit*3)==1);
+        S.best_positionD(end,:) = [x4,y4,z4];
+end
 
 S.fitness = fitness;
-
-S.popavg_correlation = nanmean(S.correlation,1);
-S.popavg_avgscore = nanmean(S.avg_score,1);
-S.popavg_propofcorrect = nanmean(S.propof_correct,1);
-
+S.popavg_fitness_activation = nanmean(S.fitness_activation,1);
 S.runningtime_min = toc/60;
 
 
