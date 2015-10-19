@@ -1,0 +1,11 @@
+diff a/collect_parameters.m b/collect_parameters.m	(rejected hunks)
+@@ -46,7 +46,7 @@
+     P.tolerance,
+     P.synchronous_update,
+     P.field_ratio,
+-    P.autothreshold_duringtesting,
++    NaN,
+     P.noise,
+     P.missing_perc,
+     };
+\ No newline at end of file

@@ -59,12 +59,12 @@ if S.mode == 's'
     save_plot = 1;
     
     B.repetitions = 1;                  % number of independent runs
-    B.popseeds = [704];     % 704 random seed of independent runs
+    B.popseeds = [704];     % 704; random seed of independent runs
     
-    S.nbof_generations = 30;             % number of generations of attractor networks
-    S.popsize = 10;                     % number of attractor networks in the population
-    S.selection_type = 'elitist';    % 'truncation'
-    S.selected_perc = 10;               % [0, 100]; the selected percentage of individuals for reproduction
+    S.nbof_generations = 300;             % number of generations of attractor networks
+    S.popsize = 1000;                     % number of attractor networks in the population
+    S.selection_type = 'elitist';    % 'elitist'
+    S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction
     S.fitness_measure = 'avg_score';    % choose from the fields of T - see in TestAttractor fn
     S.random_training_order = 1;
     S.random_testing_order = 1;
@@ -77,7 +77,7 @@ if S.mode == 's'
     S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
     S.parametersets = zeros(1, S.popsize) + 2015; % name of the parameterset for the attractors
     S.save_pop = 0;                     % 1: save the whole population in G; 0: only save the last generation
-    S.do_distance_test = 0;             % testonly works when S.nbof_global_tesingpatterns = 1
+    S.do_distance_test = 1;             % test only works when S.nbof_global_testingpatterns = 1
 end
 
 %% Parameters for testing individual networks
@@ -119,7 +119,6 @@ end
 
 B.tic = tic;
 B.batch_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
-pause(1)
 B.fitness = NaN(B.repetitions, S.nbof_generations);
 B.excelfile = [folder, 'RESULTS.xlsx'];
 P = getParameters(S.parametersets(1));
@@ -131,6 +130,7 @@ for r = 1:B.repetitions
     'Running...'
     r
     S.popseed = B.popseeds(r);
+    pause(1)
     [G, S] = AttractorPop(S);
     B.fitness(r,:) = nanmean(S.fitness, 1); % average fitness of the population in each generations; rows=repetitions; columns=generations
     
@@ -217,10 +217,36 @@ if S.mode=='s' && save_plot && B.repetitions>1
     close
 end
 
+%% Plot for distance test
+
+if S.do_distance_test
+    figure
+    hist(S.closest_trained_pattern_indices(:), numel(unique(S.closest_trained_pattern_indices(:))))% figure
+    cim = 'Histogram of closest trained pattern indices for all generations';
+    title(cim)
+    print('-dpng', [folder, cim, '.png'])
+    close    
+    
+    figure
+    boxplot(S.closest_trained_pattern_distances)
+    cim = 'Distance of the output patterns from the closest trained pattern in each generation';
+    title(cim)
+    print('-dpng', [folder, cim, '.png'])
+    close
+    
+    figure
+    boxplot(S.closest_trained_pattern_indices)
+    %set(gca, 'equal')
+    %axis equal
+    %axis image
+    %axis square
+    cim = 'Indices of the closest trained patterns to the outputs in each generation';
+    title(cim)
+    print('-dpng', [folder, cim, '.png'])
+    close
+end
+    
 %% Monitor
-% figure
-%hist(S.closest_trained_pattern_indices(:), numel(unique(S.closest_trained_pattern_indices(:))))% figure
-% boxplot(S.closest_trained_pattern_distances(:))
 
 %numel(unique(S.fitness(:,end)))
 %[S.runningtime_min, S.avg_performance, abs(sparseness(G{1}.D.trainingset) - sparseness(G{1}.T.outputs))]

@@ -145,7 +145,7 @@ for r = 1:B.repetitions
     end
     
     if save2excel
-        collection = collect_parameters(S,P);
+        collection = collect_parameters_trees(S,P);
         where = size(xlsread(B.excelfile),1)+1;
         xlswrite(B.excelfile, collection', 'results', ['A', num2str(where)]);        
     end

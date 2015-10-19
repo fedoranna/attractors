@@ -1,10 +1,10 @@
-function collection = collect_parameters(S,P)
+function collection = collect_parameters_trees(S,P)
 
 collection = {
     S.pop_ID,
-    S.popavg_correlation(end),
-    S.popavg_avgscore(end),
-    S.popavg_propofcorrect(end),
+    S.fitness_activation(end),
+    S.fitness_activation(end),
+    S.fitness_activation(end),
     S.mode,
     S.popsize,
     S.fitness_measure,
@@ -46,7 +46,7 @@ collection = {
     P.tolerance,
     P.synchronous_update,
     P.field_ratio,
-    P.autothreshold_duringtesting,
+    NaN,
     P.noise,
     P.missing_perc,
     };
