@@ -61,7 +61,7 @@ if S.mode == 's'
     B.repetitions = 1;                  % number of independent runs
     B.popseeds = [704];     % 704; random seed of independent runs
     
-    S.nbof_generations = 300;             % number of generations of attractor networks
+    S.nbof_generations = 30;             % number of generations of attractor networks
     S.popsize = 1000;                     % number of attractor networks in the population
     S.selection_type = 'elitist';    % 'elitist'
     S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction
@@ -69,7 +69,7 @@ if S.mode == 's'
     S.random_training_order = 1;
     S.random_testing_order = 1;
     S.mutation_rate = 0.0025;              % probability of mutation/bit during reproduction
-        
+    
     S.nbof_global_testingpatterns = 1;  % the number of global testing patterns; if 0 then each individual is tested on its own testing set
     S.retraining = 1;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
     S.known_global_problem = 0;         % 1: the global problem is used as the first trainingpattern of the first network in the population; 0: the global problem is unknown to all networks
@@ -107,7 +107,7 @@ if S.mode == 'i'
     S.known_global_problem = 0;         % 1: the global problem is used as the first trainingpattern of the first network in the population; 0: the global problem is unknown to all networks
     S.firstgen_input_random = 1;        % 1: the testing input of each network in the first generation is a subset of its trainingset; 0: the testing set is independent of the trainingset
     S.save_pop = 0;
-  
+    
 end
 
 %% Run
@@ -139,14 +139,14 @@ for r = 1:B.repetitions
     'Saving data...'
     
     if save_matfile
-        %save([folder, S.pop_ID, '.mat'], 'S', 'B', 'P', 'G', '-v7.3');
-        save([folder, S.pop_ID, '.mat'], 'S', 'B', 'P', '-v7.3');
+        save([folder, S.pop_ID, '.mat'], 'S', 'B', 'P', 'G', '-v7.3');
+        %save([folder, S.pop_ID, '.mat'], 'S', 'B', 'P', '-v7.3');
     end
     
     if save2excel
         collection = collect_parameters(S,P);
         where = size(xlsread(B.excelfile),1)+1;
-        xlswrite(B.excelfile, collection', 'results', ['A', num2str(where)]);        
+        xlswrite(B.excelfile, collection', 'results', ['A', num2str(where)]);
     end
     
     %% Plotting
@@ -165,14 +165,44 @@ for r = 1:B.repetitions
         title(cim)
         print('-dpng', [folder, cim, '.png'])
         close
-    end    
+        %%
+        if S.do_distance_test
+            figure
+            hist(S.closest_trained_pattern_indices(:), numel(unique(S.closest_trained_pattern_indices(:))))% figure
+            title(S.pop_ID)
+            ylabel('Frequency')
+            xlabel('Indices of the trained patterns closest to the outputs')
+            print('-dpng', [folder, [S.pop_ID, '_distancetest_hist'], '.png'])
+            close
+            
+            figure
+            boxplot(S.closest_trained_pattern_distances)
+            set(gca, 'xtick', 0:50:S.nbof_generations, 'xticklabel',0:50:S.nbof_generations)
+            title(S.pop_ID)
+            xlabel('Generations')
+            ylabel('Distance of the output patterns from the closest trained pattern')
+            print('-dpng', [folder, [S.pop_ID, '_distancetest_dist'], '.png'])
+            close
+            
+            figure
+            boxplot(S.closest_trained_pattern_indices)
+            set(gca, 'xtick', 0:50:S.nbof_generations, 'xticklabel',0:50:S.nbof_generations)
+            cim = 'Indices of the closest trained patterns to the outputs in each generation';
+            title(S.pop_ID)
+            xlabel('Generations')
+            ylabel('Indices of the trained patterns closest to the outputs')
+            print('-dpng', [folder, [S.pop_ID, '_distancetest_ind'], '.png'])
+            close
+        end
+        %%
+    end
     
     if S.mode == 'i' && save_plot
         performance = NaN(S.popsize, 3);
         performance(:,1) = S.correlation;
         performance(:,2) = S.avg_score;
         performance(:,3) = S.propof_correct;
-
+        
         if size(performance,1)>1
             figure
             boxplot(performance, 'labels', {'Correlation'; 'Proportion of correct neurons'; 'Proportion of correct patterns'})
@@ -217,45 +247,24 @@ if S.mode=='s' && save_plot && B.repetitions>1
     close
 end
 
-%% Plot for distance test
-
-if S.do_distance_test
-    figure
-    hist(S.closest_trained_pattern_indices(:), numel(unique(S.closest_trained_pattern_indices(:))))% figure
-    cim = 'Histogram of closest trained pattern indices for all generations';
-    title(cim)
-    print('-dpng', [folder, cim, '.png'])
-    close    
-    
-    figure
-    boxplot(S.closest_trained_pattern_distances)
-    cim = 'Distance of the output patterns from the closest trained pattern in each generation';
-    title(cim)
-    print('-dpng', [folder, cim, '.png'])
-    close
-    
-    figure
-    boxplot(S.closest_trained_pattern_indices)
-    %set(gca, 'equal')
-    %axis equal
-    %axis image
-    %axis square
-    cim = 'Indices of the closest trained patterns to the outputs in each generation';
-    title(cim)
-    print('-dpng', [folder, cim, '.png'])
-    close
-end
-    
 %% Monitor
 
 %numel(unique(S.fitness(:,end)))
 %[S.runningtime_min, S.avg_performance, abs(sparseness(G{1}.D.trainingset) - sparseness(G{1}.T.outputs))]
 %[avg_performance, G{1}.L.thresholds(1), sparseness(G{1}.D.trainingset), sparseness(G{1}.T.outputs), abs(sparseness(G{1}.D.trainingset) - sparseness(G{1}.T.outputs))]
-% mean(S.fitness)
-% %boxplot(S.fitness)
 % %mutation_rate_pergeneration = 5*50*2*S.mutation_rate;
-% S.pop_ID;
 % sum(G{1}.T.outputs);
+
+uni = NaN(S.nbof_generations,2);
+for g = 1:S.nbof_generations
+    trained_patterns = NaN(S.popsize,P.nbof_neurons);
+    for i = 1:S.popsize
+        trained_patterns(i,:) = G{i,end}.D.trained_patterns(g,:);
+    end
+    %S.selected_perc/100*S.popsize - size(unique(trained_patterns,'rows'),1)
+    uni(g,1) = g;
+    uni(g,2) = size(unique(trained_patterns,'rows'),1);
+end
 
 %% Visualize weights
 

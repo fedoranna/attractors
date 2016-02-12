@@ -54,27 +54,27 @@ S.mode = 's'; % selection or individuals
 if S.mode == 's'
     beeps = 3;
     folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\7. Trees\';
-    save2excel = 1;
+    save2excel = 0;
     save_matfile = 1;
     save_plot = 1;
     make_movie = 1;
     
     B.repetitions = 1;                  % number of independent runs
-    B.popseeds = [704];     % 704 random seed of independent runs
+    B.popseeds = [704];     % 704; random seed of independent runs
     
-    S.nbof_generations = 200;             % number of generations of attractor networks
+    S.nbof_generations = 300;             % number of generations of attractor networks
     S.popsize = 1000;                     % number of attractor networks in the population
-    S.selection_type = 'elitist';    % 'truncation'
-    S.selected_perc = 10;               % [0, 100]; the selected percentage of individuals for reproduction
+    S.selection_type = 'elitist';    % 'elitist'
+    S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction
     S.fitness_measure = 'fitness_side';    % choose from the fields of T - see in calculate_performance fn
     S.random_training_order = 1;
     S.random_testing_order = 1;
-    S.mutation_rate = 0.003;              % probability of mutation/bit during reproduction
+    S.mutation_rate = 0.00003;              % probability of mutation/bit during reproduction
         
     S.retraining = 1;                   % [0, 1]; probabilistic retraining in each generation with the selected outputs
     S.nbof_global_testingpatterns = 0;
     S.known_global_problem = 0;         % 1: the global problem is used as the first trainingpattern of the first network in the population; 0: the global problem is unknown to all networks
-    S.firstgen_input_random = 1;        % 1: the testing input of each network in the first generation is a subset of its trainingset; 0: the testing set is independent of the trainingset
+    S.firstgen_input_random = 0;        % 1: the testing input of each network in the first generation is a subset of its trainingset; 0: the testing set is independent of the trainingset
     S.forgetting_rate = 0;              % [0, 1]; weights are multiplied by 1-S.forgetting_rate before retraining
     S.parametersets = zeros(1, S.popsize) + 20154; % name of the parameterset for the attractors
     S.save_pop = 0;                     % 1: save the whole population in G; 0: only save the last generation
@@ -236,12 +236,22 @@ end
 % S.pop_ID;
 % sum(G{1}.T.outputs);
 
+% diff = NaN(1000,3);
+% for i=1:1000
+% %     diff(i,1)  = abs(G{i,1}.T.apexD(1) - sum(G{i,1}.D.testingset_I(1:100)==1));
+% %     diff(i,2)  = abs(G{i,1}.T.apexD(2) - sum(G{i,1}.D.testingset_I(101:200)==1));
+% %     diff(i,3)  = abs(G{i,1}.T.apexD(3) - sum(G{i,1}.D.testingset_I(201:300)==1));
+%     diff(i,1)  = sum(G{i,1}.D.testingset_I(1:100)==1);
+%     diff(i,2)  = sum(G{i,1}.D.testingset_I(101:200)==1);
+%     diff(i,3)  = sum(G{i,1}.D.testingset_I(201:300)==1);
+% end
+
 %% Visualize weights
 
 if 1==0
     %figure
     %for i = 1:10
-    imagesc(G{1}.W.state)
+    imagesc(G{end}.W.state)
     %title(num2str(i))
     %end
     colorbar

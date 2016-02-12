@@ -24,7 +24,7 @@ for i = 1:S.popsize
     % Initialize population
     A = InitializeAttractor_trees(P);
     
-    % Put the global problem (the solution) into one of the networks
+    % Put the global problem (the solution) into the first network
     if S.known_global_problem==1 && i==1
         A.D.trainingset(1,:) = S.global_problem;
     end
@@ -83,10 +83,10 @@ for g = 2:S.nbof_generations
             end
             
             % No mutation in the z coordinate before 100 generations
-            if g < 100
-            %if G{i, g-1}.T.outputs(1) ==  G{i, g-1}.P.inactive_input
-                G{i, g-1}.T.outputs(200:300) = G{i, g-1}.P.inactive_input;
-            end
+%             if g < 100
+%             %if G{i, g-1}.T.outputs(1) ==  G{i, g-1}.P.inactive_input
+%                 G{i, g-1}.T.outputs(200:300) = G{i, g-1}.P.inactive_input;
+%             end
             
             G{i,g-1} = calculate_performance_trees(G{i,g-1});
         end

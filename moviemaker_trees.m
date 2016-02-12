@@ -28,7 +28,7 @@ color = [
 %% Make movie
 
 % Initialize video
-fps = 10;
+fps = 20;
 quality = 100; % 0-100
 
 outfile = [folder, S.pop_ID];

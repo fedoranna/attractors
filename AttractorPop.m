@@ -168,6 +168,8 @@ for g = 2:S.nbof_generations
             end
         end
         G{i, g} = TestAttractor(G{i, g});
+        
+        % Distance test
         if S.do_distance_test
             [G{i,g}.T.closest_trained_pattern_index, G{i,g}.T.closest_trained_pattern_distance] = distance_test(G{i,g}.T.outputs, G{i,g}.D.trained_patterns);
             S.closest_trained_pattern_indices(i,g) = G{i,g}.T.closest_trained_pattern_index;
@@ -180,7 +182,7 @@ for g = 2:S.nbof_generations
         end
         
         % Delete all but the last population to save memory
-        if S.save_pop == 0
+        if S.save_pop == 0 && i>1
             G{i,g-1}=[];
         end
         

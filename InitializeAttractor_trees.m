@@ -46,13 +46,13 @@ else
 end
 
 % If input consists of 0s and 1s; might not be unique!
-% unit = P.lengthof_patterns/3;
-% D.testingset = NaN(1, P.lengthof_patterns);
-% D.testingset(1:unit) = double(rand(1,unit) <= mean([x1,x2,x3])/unit);
-% D.testingset(unit+1:unit*2) = double(rand(1,unit) <= mean([y1,y2,y3])/unit);
-% D.testingset(unit*2+1:unit*3) = double(rand(1,unit) <= mean([z1,z2,z3])/unit);
+unit = P.lengthof_patterns/3;
+D.testingset = NaN(1, P.lengthof_patterns);
+D.testingset(1:unit) = double(rand(1,unit) <= mean([x1,x2,x3])/unit);
+D.testingset(unit+1:unit*2) = double(rand(1,unit) <= mean([y1,y2,y3])/unit);
+D.testingset(unit*2+1:unit*3) = double(rand(1,unit) <= mean([z1,z2,z3])/unit);
 
-D.testingset = zeros(1, P.lengthof_patterns)-1;
+%D.testingset = zeros(1, P.lengthof_patterns)-1;
 
 % If input consists of -1 and +1; might not be unique!
 if P.inactive_input == -1
