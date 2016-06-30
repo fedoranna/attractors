@@ -55,14 +55,14 @@ if S.mode == 's'
     beeps = 3;
     folder = 'C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\RESULTS\7. Trees\';
     save2excel = 0;
-    save_matfile = 1;
+    save_matfile = 0;
     save_plot = 1;
     make_movie = 1;
     
     B.repetitions = 1;                  % number of independent runs
     B.popseeds = [704];     % 704; random seed of independent runs
     
-    S.nbof_generations = 300;             % number of generations of attractor networks
+    S.nbof_generations = 300;             % maximum number of generations
     S.popsize = 1000;                     % number of attractor networks in the population
     S.selection_type = 'elitist';    % 'elitist'
     S.selected_perc = 20;               % [0, 100]; the selected percentage of individuals for reproduction

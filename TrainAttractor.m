@@ -50,19 +50,31 @@ switch A.P.learning_rule
         A.W.state = A.W.state * (1-A.P.forgetting_rate);
         A.W.state = A.W.state + A.P.learning_rate * inc;
         A.W.state = A.W.state .* A.W.masking_matrix;
-
+        
     case 'Storkey' % based on Storkey, 2015
         
         A.W.state = A.W.state * (1-A.P.forgetting_rate);
-
+        
         h = A.D.trainingset*A.W.state;
         inc = 1/A.P.nbof_neurons * (A.D.trainingset'*A.D.trainingset - A.D.trainingset'*h - h'*A.D.trainingset);
-
-        %A.W.state = A.W.state * (1-A.P.forgetting_rate);
+        
         A.W.state = A.W.state + A.P.learning_rate * inc;
         A.W.state = A.W.state .* A.W.masking_matrix;
         
-    otherwise        
+    case 'Storkey_bypattern'
+        
+        for p = 1:size(A.D.trainingset,1)
+            A.W.state = A.W.state * (1-A.P.forgetting_rate);
+            pattern = A.D.trainingset(p,:);
+            
+            h = pattern*A.W.state;
+            inc = 1/A.P.nbof_neurons * (pattern'*pattern - pattern'*h - h'*pattern);
+            
+            A.W.state = A.W.state + A.P.learning_rate * inc;
+            A.W.state = A.W.state .* A.W.masking_matrix;
+        end
+        
+    otherwise
         'Error: learning rule is unknown!'
 end
 

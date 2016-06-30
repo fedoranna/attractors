@@ -1,7 +1,4 @@
-function A = InitializeAttractor_trees(P)
-
-P.end_of_initializing_parameters = '--------';
-P.ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
+function A = InitializeAttractor_general(P)
 
 %% Delete unnecessary parameters
 
@@ -9,32 +6,23 @@ if strcmp(func2str(P.activation_function), 'transferfn_piecewise_linear') || str
     P.gain_factor = NaN;
 end
 
-%% Calculate tetrahedron
+S.end_of_initializing_parameters = '--------';
+D.start = 1;
 
-a = P.side_tetrahedron;
-x1 = P.apex_tetrahedron(1,1);
-y1 = P.apex_tetrahedron(1,2);
-z1 = P.apex_tetrahedron(1,3);
+%% Generate initial trainingset to pretrain networks before evolution begins
 
-x2 = x1;
-y2 = y1 + a;
-z2 = z1;
+if strcmp(P.trainingseed, 'noseed')
+    rng shuffle
+    s = rng;
+    P.trainingseed = s.Seed;
+    rng(P.trainingseed, 'twister');
+else
+    rng(P.trainingseed, 'twister');
+end
 
-x3 = x1 + a * sqrt(3/4);
-y3 = y1 + a/2;
-z3 = z1;
+D = P.trainingsetgenerator(P, D);
 
-x4 = x1 + a/sqrt(12);
-y4 = y1 + a/2;
-z4 = z1 + a * sqrt(2/3);
-
-P.apices_tetrahedron = [
-    x1, y1, z1;
-    x2, y2, z2;
-    x3, y3, z3;
-    x4, y4, z4];
-    
-%% Generate input pattern and testingset
+%% Generate initial provoking patterns (testingset)
 
 if strcmp(P.inputseed, 'noseed')
     rng shuffle
@@ -45,21 +33,7 @@ else
     rng(P.inputseed, 'twister');
 end
 
-% If input consists of 0s and 1s; might not be unique!
-unit = P.lengthof_patterns/3;
-D.testingset = NaN(1, P.lengthof_patterns);
-D.testingset(1:unit) = double(rand(1,unit) <= mean([x1,x2,x3])/unit);
-D.testingset(unit+1:unit*2) = double(rand(1,unit) <= mean([y1,y2,y3])/unit);
-D.testingset(unit*2+1:unit*3) = double(rand(1,unit) <= mean([z1,z2,z3])/unit);
-
-% If input consists of -1 and +1; might not be unique!
-if P.inactive_input == -1
-    D.testingset = sign(D.testingset-0.1);
-end
-
-% Make testingset unique
-% D.testingset = unique(D.testingset, 'rows');
-% P.nbof_patterns = size(D.testingset, 1);
+D = P.testingsetgenerator(P, D);
 
 % Complete input
 D.testingset_O = D.testingset;
@@ -80,27 +54,9 @@ nbof_deleted = round((P.missing_perc/100) * numel(D.testingset_O));
 deleted = randperm(numel(D.testingset_O), nbof_deleted);
 D.testingset_I(deleted) = 0;
 
-%% Choose trainingset
-
-if strcmp(P.trainingseed, 'noseed')
-    rng shuffle
-    s = rng;
-    P.trainingseed = s.Seed;
-    rng(P.trainingseed, 'twister');
-else
-    rng(P.trainingseed, 'twister');
-end
-
-k = round(P.nbof_patterns * P.trained_percentage/100); % number of training patterns
-if k < P.nbof_patterns
-    D.selected_patterns = randperm(P.nbof_patterns, k);
-    D.trainingset = D.testingset(D.selected_patterns,:);
-else
-    D.trainingset = D.testingset;
-end
-
 %% Layer of neurons
 
+L.state = zeros(1,P.nbof_neurons);
 L.thresholds = repmat(P.threshold, 1, P.nbof_neurons); % row vector for all neurons for asynchoronous update and individual thresholds
 
 %% Weights
