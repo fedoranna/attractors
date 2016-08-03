@@ -2,7 +2,7 @@
 
 clear all
 addpath(genpath('C:\Users\Anna\OneDrive\Documents\MATLAB\')); % path for the folder containing the functions
-folder = 'C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\RESULTS\7. Trees\4. fourconds\'; % path for the folder containing the test file and for saving the results
+folder = 'C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\RESULTS\7. Trees\combined\'; % path for the folder containing the test file and for saving the results
 
 %% Files and folders
 

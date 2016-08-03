@@ -20,11 +20,10 @@ S.print2screen = 0;
 
 %% Run
 
+mkdir(B.folder)
 T.test_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
 T.conditions = {'CON', 'COM'}; % names
-T.Bs = cell(1,2);
-
- %(15, 10, 0), (15, 90, 0), (84, 50, 0) and (38, 50, 65). 
+T.Bs = cell(1,2); 
 
 % 'Control Condition'
 'Control Condition'
