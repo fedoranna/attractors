@@ -12,13 +12,13 @@ load([folder, 'params_robots_1.mat'])
 B.folder = [folder, 'RESULTS\8. Robots\'];              % folder for saving results
 %B.folder = [folder, 'combined/'];   % folder for saving results
 
-B.repetitions = 10;
+B.repetitions = 10; % Number of individuals in a condition
 B.save_movie = 0;
 B.save_matfile = 0;
 B.popseeds = B.repetitions*2+1 : B.repetitions*3;   
 S.print2screen = 1;
 
-S.nbof_generations = 200;
+S.nbof_generations = 90;
 S.popsize = 100;    
 %% Run
 

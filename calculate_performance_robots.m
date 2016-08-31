@@ -12,5 +12,5 @@ end
 
 %% Made up fitness function
 
-A.T.fitness_robots = sum(motors)/800;
+A.T.fitness_robots = sum(motors)/(8*unit/2);
 
