@@ -12,7 +12,7 @@ load([folder, 'params_robots_1.mat'])
 B.folder = [folder, 'RESULTS\8. Robots\'];              % folder for saving results
 %B.folder = [folder, 'combined/'];   % folder for saving results
 
-B.repetitions = 10; % Number of individuals in a condition
+B.repetitions = 3; % Number of individuals in a condition
 B.save_movie = 0;
 B.save_matfile = 0;
 B.popseeds = B.repetitions*2+1 : B.repetitions*3;   
@@ -24,16 +24,18 @@ S.popsize = 100;
 
 mkdir(B.folder)
 T.test_ID = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
-T.conditions = {'CO1', 'CO2'}; % names
+T.conditions = {'MAX', 'MIN'}; % names
 T.Bs = cell(1,2); 
 
 % 'Condition 1'
 'Condition 1'
+S.fitness_measure = 'fitness_maximalize';
 [B,S,P,G] = run_AttractorPop_robots(B,S,P);
 T.Bs{1} = B;
 
 % 'Condition 2'
 'Condition 2'
+S.fitness_measure = 'fitness_minimalize';
 [B,S,P,G] = run_AttractorPop_robots(B,S,P);
 T.Bs{2} = B;
 
@@ -61,6 +63,36 @@ for i = 1:3
     pause(0.5)
 end
 
+%% Test
+
+figure
+subplot(3,2,1)
+imagesc(T.Bs{1}.Ss{1}.best_output) % there should be 50-50 bands of red and blue
+subplot(3,2,2)
+imagesc(T.Bs{2}.Ss{1}.best_output) % there should be 50-50 bands of red and blue
+subplot(3,2,3)
+imagesc(T.Bs{1}.Ss{2}.best_output) % there should be 50-50 bands of red and blue
+subplot(3,2,4)
+imagesc(T.Bs{2}.Ss{2}.best_output) % there should be 50-50 bands of red and blue
+subplot(3,2,5)
+imagesc(T.Bs{1}.Ss{3}.best_output) % there should be 50-50 bands of red and blue
+subplot(3,2,6)
+imagesc(T.Bs{2}.Ss{3}.best_output) % there should be 50-50 bands of red and blue
+
+%%
+figure
+subplot(3,2,1)
+imagesc(T.Bs{1}.Ss{1}.best_position, [-50,+50]) % all of it should be 50 for best fitness
+subplot(3,2,2)
+imagesc(T.Bs{2}.Ss{1}.best_position, [-50,+50]) % all of it should be 50 for best fitness
+subplot(3,2,3)
+imagesc(T.Bs{1}.Ss{2}.best_position, [-50,+50]) % all of it should be 50 for best fitness
+subplot(3,2,4)
+imagesc(T.Bs{2}.Ss{2}.best_position, [-50,+50]) % all of it should be 50 for best fitness
+subplot(3,2,5)
+imagesc(T.Bs{1}.Ss{3}.best_position, [-50,+50]) % all of it should be 50 for best fitness
+subplot(3,2,6)
+imagesc(T.Bs{2}.Ss{3}.best_position, [-50,+50]) % all of it should be 50 for best fitness
 
 
 

@@ -11,6 +11,11 @@ for i = 1:8
 end
 
 %% Made up fitness function
+% values in "motors" are [-50, 50]
 
-A.T.fitness_robots = sum(motors)/(8*unit/2);
+normalized = sum(motors)/(8*(unit/2)); % [-1, +1]
+
+A.T.fitness_robots = normalized;
+A.T.fitness_maximalize = 0.5 + 0.5*normalized;
+A.T.fitness_minimalize = 0.5 + (-0.5)*normalized;
 
