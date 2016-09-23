@@ -42,7 +42,7 @@ S.nbof_selected = ceil(S.popsize * (S.selected_perc/100));
 S.fitness = NaN(S.popsize, S.nbof_generations);
 S.indexof_best = NaN(S.nbof_generations,1);
 S.best_output = NaN(S.nbof_generations, P.lengthof_patterns);
-S.best_position = NaN(S.nbof_generations, 3);
+S.best_position = NaN(S.nbof_generations, P.lengthof_position);
 S.switch_at = NaN;
 S.success = 0;
 retraining_switch = 0;
@@ -81,6 +81,7 @@ for g = 2:S.nbof_generations
         % Store best output (before mutation)
         S.indexof_best(g-1) = index(end);
         S.best_output(g-1,:) = G{index(end), g-1}.T.outputs;
+        S.best_position(g-1,:) = G{index(end), g-1}.T.position;
         
     end
     
@@ -201,6 +202,7 @@ if g == S.nbof_generations && S.success == 0
         % Store best output
         S.indexof_best(g) = index(end);
         S.best_output(g,:) = G{index(end), g}.T.outputs;
+        S.best_position(g,:) = G{index(end), g}.T.position;        
         
     end
     

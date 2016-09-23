@@ -5,9 +5,9 @@ clear all
 B.beeps = 0;
 B.folder = 'C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\RESULTS\7. Trees\';
 B.save2excel = 0;
-B.save_matfile = 1;
+B.save_matfile = 0; % save individual simulations
 B.save_plot = 1;
-B.save_movie = 1;
+B.save_movie = 0;
 B.repetitions = 1;                  % number of independent runs
 B.popseeds = [1:B.repetitions];     % 704; random seed of independent runs
 
@@ -59,7 +59,7 @@ P.lengthof_patterns = P.nbof_neurons;% the length of patterns;
 P.inactive_input = -1;              % the value of inactive inputs: 0 or -1; match it with the transfer function!
 
 % Training
-P.sparseness_pretraining = [0, 0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; % sparseness of pretraining patterns (one value / motor)
+P.sparseness_pretraining = [0.5 0.5 0 0 0 0 0 0]; % sparseness of pretraining patterns (one value / motor)
 P.nbof_pretrainingpatterns = 90;    % nb of pretraining patterns
 P.learning_rule = 'Storkey_bypattern';        % 'Hebbian1', 'Hebbian2', 'covariance1', 'covariance2', 'Storkey' (see TrainAttractor)
 P.learning_rate = 1;                % learning rate
@@ -69,6 +69,7 @@ P.threshold_algorithm = @set_threshold_aftertraining_det;       % function to se
 P.normalize = 0;                    % normalize weights after training
 
 % Testing
+P.lengthof_position = 8;            % length of vector that is calculated from the activation patterns
 P.timeout = 33;                     % the maximum number of recurrent cycles
 P.convergence_threshold = 0;        % convergence threshold for recurrence
 P.tolerance = 0;                    % if>0 then binarizes output; tolerance for the difference between output and active/inactive values
@@ -79,4 +80,4 @@ P.missing_perc = 0;                 % percentage of missing bits in input
 
 %% Save
 
-save('C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\params_robots_1.mat', 'B', 'S', 'P')
+save('C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\params_robots_2.mat', 'B', 'S', 'P')
