@@ -29,7 +29,7 @@ P.initial_input = 'derived';        % Method for generating the initial testings
 
 %% Run
 
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 
 %% Calculate number of repetitions
 

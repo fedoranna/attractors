@@ -71,6 +71,7 @@ P.threshold_algorithm = @set_threshold_aftertraining_det;       % function to se
 P.normalize = 0;                    % normalize weights after training
 
 % Testing
+P.lengthof_position = 3;            % length of vector that is calculated from the activation patterns
 P.timeout = 33;                     % the maximum number of recurrent cycles
 P.convergence_threshold = 0;        % convergence threshold for recurrence
 P.tolerance = 0;                    % if>0 then binarizes output; tolerance for the difference between output and active/inactive values

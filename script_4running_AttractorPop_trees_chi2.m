@@ -1,8 +1,8 @@
 %% Load parameters
 
 clear all
-addpath(genpath('C:\Users\Anna\SkyDrive\Documents\MATLAB\'));
-load('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\params_trees_4.mat')
+addpath(genpath('C:\Users\Anna\OneDrive\Documents\MATLAB\'));
+load('C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\params_trees_4.mat')
 B.folder = 'C:\Users\Anna\Documents\RESULTS-Trees\';
 
 % addpath(genpath('/mnt/am/Anna_dok/matlab/'));
@@ -44,25 +44,25 @@ T.Bs = cell(1,4);
 S.popsize = 100; 
 S.mutation_rate = 0.03; 
 S.retraining = 0.7;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{1} = B;
 
 S.popsize = 20; 
 S.mutation_rate = 0.03; 
 S.retraining = 0.7;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{2} = B;
 
 S.popsize = 100; 
 S.mutation_rate = 0.3; 
 S.retraining = 0.7;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{3} = B;
 
 S.popsize = 100; 
 S.mutation_rate = 0.03; 
 S.retraining = 0.2;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{4} = B;
 
 %% Chi-square test

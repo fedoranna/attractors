@@ -2,8 +2,8 @@
 
 clear all
 
-%folder = 'C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\';   % folder of functions
-folder = '/mnt/am/Anna_dok/matlab/';               % folder of functions
+folder = 'C:\Users\Anna\OneDrive\Documents\MATLAB\Attractor\';   % folder of functions
+%folder = '/mnt/am/Anna_dok/matlab/';               % folder of functions
 
 %% Modify parameters
 
@@ -27,25 +27,25 @@ T.Bs = cell(1,4);
 'Condition 2DD (2D + derived)'
 P.sparseness_pretraining = [0.5, 0.5, 0];
 P.sparseness_provoking =   [0.38, 0.5, 0];
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{1} = B;
 
 'Condition 2DR (2D + random)'
 P.sparseness_pretraining = [0.5, 0.5, 0];
 P.sparseness_provoking =   [0.5, 0.5, 0.5];
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{2} = B;
 
 'Condition 3DD (3D + derived)'
 P.sparseness_pretraining = [0.5, 0.5, 0.5];
 P.sparseness_provoking =   [0.38, 0.5, 0];
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{3} = B;
 
 'Condition 3DR (3D + random)'
 P.sparseness_pretraining = [0.5, 0.5, 0.5];
 P.sparseness_provoking =   [0.5, 0.5, 0.5];
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{4} = B;
 
 %% Table: number of solvers

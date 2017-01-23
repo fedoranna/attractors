@@ -1,7 +1,7 @@
 %% Load parameters
 
 clear all
-addpath(genpath('C:\Users\Anna\SkyDrive\Documents\MATLAB\'));
+addpath(genpath('C:\Users\Anna\OneDrive\Documents\MATLAB\'));
 load('C:\Users\Anna\SkyDrive\Documents\MATLAB\Attractor\params_trees_3.mat')
 
 %% Modify parameters
@@ -29,7 +29,7 @@ P.update_each = 1;                  % update each neuron once, or update neurons
 
 %% Run
 
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 
 %% Plot retraining probability
 

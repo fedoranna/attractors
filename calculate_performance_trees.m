@@ -15,6 +15,7 @@ y4 = sum(A.T.outputs(unit+1:unit*2)==1);
 z4 = sum(A.T.outputs(unit*2+1:unit*3)==1);
 apexD = [x4,y4,z4];
 A.T.apexD = apexD;
+A.T.position = A.T.apexD;
 
 %% Error measures
 
@@ -38,9 +39,9 @@ A.T.fitness_activation = 1 - (A.T.activationdiff/A.P.nbof_neurons);
 % 
 % F = [];
 % next = 1;
-% for x = 0:20:100
-%     for y = 0:20:100
-%         for z = 0:20:100
+% for x = 0:1:100
+%     for y = 0:1:100
+%         for z = 0:1:100
 %             apexD = [x,y,z];
 %             
 %             sidediff = abs(round(distance_3D(apexD,apexA))-sidetarget) + abs(round(distance_3D(apexD,apexB))-sidetarget) + abs(round(distance_3D(apexD,apexC))-sidetarget);
@@ -68,7 +69,7 @@ A.T.fitness_activation = 1 - (A.T.activationdiff/A.P.nbof_neurons);
 % 
 % min(F') %  0.3167   -0.0281    0.4100
 % max(F') %  1 1 1 
- 
-
-            
-
+%  
+% 
+%             
+% 

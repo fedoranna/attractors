@@ -16,8 +16,8 @@ B.save_matfile = 0; % Save individual simulations
 B.popseeds = B.repetitions*2+1 : B.repetitions*3;   
 S.print2screen = 1;
 
-B.repetitions = 2; % Number of individuals/simulations in a condition
-S.nbof_generations = 3; % Number of gnerations during selection/evolution; Time out for a single simulation for solving the task
+B.repetitions = 3; % Number of individuals/simulations in a condition
+S.nbof_generations = 2; % Number of gnerations during selection/evolution; Time out for a single simulation for solving the task
 S.popsize = 10;  % Number of attractor networks within an individual
 
 %% Run
@@ -30,7 +30,7 @@ T.Bs = cell(1,2);
 % 'Condition 1'
 'Condition 1'
 S.fitness_measure = 'fitness_maximize';
-[B,S,P,G] = run_AttractorPop_robots(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{1} = B;
 
 % 'Condition 2'

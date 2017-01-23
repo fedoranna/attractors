@@ -28,28 +28,28 @@ T.Bs = cell(1,4);
 S.popsize = 100; 
 S.mutation_rate = 0.03; 
 S.retraining = 0.7;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{1} = B;
 
 'Condition MC (Memory Capacity; popsize / 10)'
 S.popsize = 10; % S.selected_perc will be 10% instead of 3%!
 S.mutation_rate = 0.03; 
 S.retraining = 0.7;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{2} = B;
 
 'Condition MR (Mutation Rate * 10)'
 S.popsize = 100; 
 S.mutation_rate = 0.3; 
 S.retraining = 0.7;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{3} = B;
 
 'Condition RR (Retraining Rate / 10)'
 S.popsize = 100; 
 S.mutation_rate = 0.03; 
 S.retraining = 0.07;
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{4} = B;
 
 %% Table: number of solvers

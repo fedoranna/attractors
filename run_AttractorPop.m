@@ -1,7 +1,7 @@
 % This function runs evolution of patterns in a population of
 % attractor networks
 
-function [B,S,P,G] = run_AttractorPop_robots(B,S,P)
+function [B,S,P,G] = run_AttractorPop(B,S,P)
 
 %% Fill in task specific parameters
 
@@ -30,7 +30,7 @@ B.fitness_avg = NaN(B.repetitions, S.nbof_generations);
 B.fitness_max = NaN(B.repetitions, S.nbof_generations);
 B.avg_max_fitness = NaN(B.repetitions, S.nbof_generations);
 B.nbof_used_generations = NaN(B.repetitions,1);
-B.last_best_position = NaN(B.repetitions,8);
+B.last_best_position = NaN(B.repetitions,P.lengthof_position);
 B.success = NaN(B.repetitions,1);
 B.switch_at = NaN(B.repetitions,1);
 

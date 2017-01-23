@@ -51,7 +51,7 @@ S.stopping_fitness = 1;
 
 if 1==0
 P.learning_rule = 'Storkey';
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 
 figure
 subplot(3,2,1)
@@ -70,7 +70,7 @@ axis square
 colorbar
 
 P.learning_rule = 'Storkey_bypattern';
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 
 subplot(3,2,2)
 imagesc(G{1}.W.state)
@@ -96,42 +96,42 @@ figure
 P.learning_rule = 'Storkey';
 P.synchronous_update = 1;           % 0/1; whether to use synchronous or asynchronous update when testing
 P.update_each = 1;                  % update each neuron once, or update neurons wth replacement during asynchronous update
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 subplot(3,2,1)
 imagesc([G{1}.D.trainingset; G{1}.D.testingset_I; G{2}.D.trainingset; G{2}.D.testingset_I; G{3}.D.trainingset])
 
 P.learning_rule = 'Storkey';
 P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
 P.update_each = 1;                  % update each neuron once, or update neurons wth replacement during asynchronous update
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 subplot(3,2,3)
 imagesc([G{1}.D.trainingset; G{1}.D.testingset_I; G{2}.D.trainingset; G{2}.D.testingset_I; G{3}.D.trainingset])
 
 P.learning_rule = 'Storkey';
 P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
 P.update_each = 0;                  % update each neuron once, or update neurons wth replacement during asynchronous update
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 subplot(3,2,5)
 imagesc([G{1}.D.trainingset; G{1}.D.testingset_I; G{2}.D.trainingset; G{2}.D.testingset_I; G{3}.D.trainingset])
 
 P.learning_rule = 'Storkey_bypattern';
 P.synchronous_update = 1;           % 0/1; whether to use synchronous or asynchronous update when testing
 P.update_each = 1;                  % update each neuron once, or update neurons wth replacement during asynchronous update
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 subplot(3,2,2)
 imagesc([G{1}.D.trainingset; G{1}.D.testingset_I; G{2}.D.trainingset; G{2}.D.testingset_I; G{3}.D.trainingset])
 
 P.learning_rule = 'Storkey_bypattern';
 P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
 P.update_each = 1;                  % update each neuron once, or update neurons wth replacement during asynchronous update
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 subplot(3,2,4)
 imagesc([G{1}.D.trainingset; G{1}.D.testingset_I; G{2}.D.trainingset; G{2}.D.testingset_I; G{3}.D.trainingset])
 
 P.learning_rule = 'Storkey_bypattern';
 P.synchronous_update = 0;           % 0/1; whether to use synchronous or asynchronous update when testing
 P.update_each = 0;                  % update each neuron once, or update neurons wth replacement during asynchronous update
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 subplot(3,2,6)
 imagesc([G{1}.D.trainingset; G{1}.D.testingset_I; G{2}.D.trainingset; G{2}.D.testingset_I; G{3}.D.trainingset])
 
@@ -139,7 +139,7 @@ end
 
 %% Test
 
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 
 
 

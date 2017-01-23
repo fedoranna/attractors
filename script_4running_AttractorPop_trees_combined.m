@@ -30,7 +30,7 @@ T.Bs = cell(1,2);
 P.sparseness_pretraining = [0.50, 0.50, 0.00;
                             0.50, 0.50, 0.00];
 P.sparseness_provoking =   [0.38, 0.50, 0.00];
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{1} = B;
 
 % Combined condition
@@ -38,7 +38,7 @@ T.Bs{1} = B;
 P.sparseness_pretraining = [0.38, 0.50, 0.65;
                             0.50, 0.50, 0.00];
 P.sparseness_provoking =   [0.38, 0.50, 0.65];
-[B,S,P,G] = run_AttractorPop_trees(B,S,P);
+[B,S,P,G] = run_AttractorPop(B,S,P);
 T.Bs{2} = B;
 
 %% Table: number of solvers

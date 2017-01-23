@@ -3,7 +3,7 @@ function A = calculate_performance_robots(A)
 %% Motor commands
 % position is a vector of 8 values - each is a command for a motor
 % values in "position" are [-50, 50] when unit=100; 
-% they are claculated as the number of active neurons among the first 50 
+% they are calculated as the number of active neurons among the first 50 
 % neurons minus the number of active neurons among the second 50 neurons
 
 unit = numel(A.T.outputs) / 8;
